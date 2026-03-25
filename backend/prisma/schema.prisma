@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PipelineStage {
+  WISHLIST
+  APPLIED
+  INTRODUCTORY_CALL
+  ROUND_1
+  ROUND_2
+  ROUND_3
+  ROUND_4
+  ROUND_5
+  OFFER
+  REJECTED
+  WITHDRAWN
+}
+
+enum InterviewType {
+  DSA
+  LLD
+  HLD
+  SYSTEM_DESIGN
+  BEHAVIORAL
+  INTRO_CALL
+  HR
+  TAKE_HOME
+  CODING_CHALLENGE
+  OTHER
+}
+
+enum InterviewStatus {
+  UPCOMING
+  COMPLETED
+  CANCELLED
+}
+
+enum ContactRole {
+  RECRUITER
+  HIRING_MANAGER
+  REFERRAL
+  INTERVIEWER
+  OTHER
+}
+
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  website   String?
+  industry  String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  applications Application[]
+
+  @@map("companies")
+}
+
+model Application {
+  id             String        @id @default(cuid())
+  companyId      String
+  company        Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  role           String
+  jobUrl         String?
+  jobDescription String?
+  salaryMin      Int?
+  salaryMax      Int?
+  salaryCurrency String?       @default("USD")
+  location       String?
+  isRemote       Boolean       @default(false)
+  stage          PipelineStage @default(WISHLIST)
+  priority       Int           @default(0)
+  appliedDate    DateTime?
+  followUpDate   DateTime?
+  deadlineDate   DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  interviewRounds InterviewRound[]
+  contacts        Contact[]
+  notes           Note[]
+  tags            TagsOnApplications[]
+
+  @@index([stage])
+  @@index([companyId])
+  @@map("applications")
+}
+
+model InterviewRound {
+  id              String          @id @default(cuid())
+  applicationId   String
+  application     Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  roundNumber     Int
+  type            InterviewType
+  scheduledAt     DateTime?
+  durationMin     Int?
+  status          InterviewStatus @default(UPCOMING)
+  prepNotes       String?
+  reflection      String?
+  difficulty      Int?
+  interviewerName String?
+  meetingLink     String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  prepTopics PrepTopic[]
+  notes      Note[]
+
+  @@index([applicationId])
+  @@index([scheduledAt])
+  @@map("interview_rounds")
+}
+
+model PrepTopic {
+  id               String         @id @default(cuid())
+  interviewRoundId String
+  interviewRound   InterviewRound @relation(fields: [interviewRoundId], references: [id], onDelete: Cascade)
+  title            String
+  completed        Boolean        @default(false)
+  resourceUrl      String?
+  notes            String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@map("prep_topics")
+}
+
+model Contact {
+  id              String       @id @default(cuid())
+  applicationId   String?
+  application     Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  name            String
+  email           String?
+  phone           String?
+  linkedIn        String?
+  role            ContactRole  @default(OTHER)
+  company         String?
+  lastContactedAt DateTime?
+  notes           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@map("contacts")
+}
+
+model Note {
+  id               String          @id @default(cuid())
+  applicationId    String?
+  application      Application?    @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  interviewRoundId String?
+  interviewRound   InterviewRound? @relation(fields: [interviewRoundId], references: [id], onDelete: Cascade)
+  content          String
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@map("notes")
+}
+
+model Tag {
+  id       String  @id @default(cuid())
+  name     String  @unique
+  color    String? @default("#6366f1")
+  category String?
+  createdAt DateTime @default(now())
+
+  applications TagsOnApplications[]
+
+  @@map("tags")
+}
+
+model TagsOnApplications {
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  tagId         String
+  tag           Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  assignedAt    DateTime    @default(now())
+
+  @@id([applicationId, tagId])
+  @@map("tags_on_applications")
+}
