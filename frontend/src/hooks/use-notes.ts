@@ -1,6 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import api from '@/lib/api';
+import axios from 'axios';
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  if (axios.isAxiosError(error)) {
+    const msg = error.response?.data?.message;
+    if (typeof msg === 'string') return msg;
+    if (Array.isArray(msg)) return msg.join(', ');
+  }
+  return fallback;
+}
 
 export function useCreateNote() {
   const qc = useQueryClient();
@@ -11,7 +21,7 @@ export function useCreateNote() {
       qc.invalidateQueries({ queryKey: ['application'] });
       toast.success('Note added');
     },
-    onError: () => toast.error('Failed to add note'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to add note')),
   });
 }
 
@@ -24,7 +34,7 @@ export function useUpdateNote() {
       qc.invalidateQueries({ queryKey: ['application'] });
       toast.success('Note updated');
     },
-    onError: () => toast.error('Failed to update note'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to update note')),
   });
 }
 
@@ -36,6 +46,6 @@ export function useDeleteNote() {
       qc.invalidateQueries({ queryKey: ['application'] });
       toast.success('Note deleted');
     },
-    onError: () => toast.error('Failed to delete note'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to delete note')),
   });
 }

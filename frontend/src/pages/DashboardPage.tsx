@@ -8,7 +8,13 @@ import { useNavigate } from 'react-router-dom';
 import { Briefcase, TrendingUp, Calendar, Award, Clock, MessageSquare, Star, Flame } from 'lucide-react';
 import React, { useMemo } from 'react';
 
-function ChartTooltip({ active, payload, label }: any) {
+interface ChartTooltipProps {
+  active?: boolean;
+  payload?: { value: number }[];
+  label?: string;
+}
+
+function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md">
@@ -190,11 +196,15 @@ export default function DashboardPage() {
     );
   }
 
+  const offerRate = (stats?.total ?? 0) > 0
+    ? Math.round(((stats?.offers ?? 0) / stats!.total) * 100)
+    : 0;
+
   const statCards = [
     { icon: Briefcase, label: 'Total Applications', value: stats?.total ?? 0, color: 'text-blue-500' },
     { icon: TrendingUp, label: 'Active', value: activeCount, color: 'text-emerald-500' },
     { icon: Calendar, label: 'Response Rate', value: `${stats?.responseRate ?? 0}%`, color: 'text-violet-500' },
-    { icon: Award, label: 'Offers', value: stats?.offers ?? 0, color: 'text-amber-500' },
+    { icon: Award, label: 'Offers', value: `${stats?.offers ?? 0} (${offerRate}%)`, color: 'text-amber-500' },
   ];
 
   return (

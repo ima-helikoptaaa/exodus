@@ -54,9 +54,11 @@ export class InterviewsService {
   }
 
   update(id: string, dto: UpdateInterviewRoundDto) {
-    const { scheduledAt, ...rest } = dto as any;
-    const data: any = { ...rest };
-    if (scheduledAt) data.scheduledAt = new Date(scheduledAt);
+    const { scheduledAt, ...rest } = dto;
+    const data: Record<string, unknown> = { ...rest };
+    if (scheduledAt !== undefined) {
+      data.scheduledAt = scheduledAt ? new Date(scheduledAt) : null;
+    }
 
     return this.prisma.interviewRound.update({
       where: { id },

@@ -2,6 +2,16 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import api from '@/lib/api';
 import type { InterviewRound } from '@/types';
+import axios from 'axios';
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  if (axios.isAxiosError(error)) {
+    const msg = error.response?.data?.message;
+    if (typeof msg === 'string') return msg;
+    if (Array.isArray(msg)) return msg.join(', ');
+  }
+  return fallback;
+}
 
 export function useInterviewRounds(applicationId: string | undefined) {
   return useQuery<InterviewRound[]>({
@@ -27,7 +37,7 @@ export function useCreateInterviewRound() {
       qc.invalidateQueries({ queryKey: ['application'] });
       toast.success('Interview round added');
     },
-    onError: () => toast.error('Failed to add interview round'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to add interview round')),
   });
 }
 
@@ -40,7 +50,7 @@ export function useUpdateInterviewRound() {
       qc.invalidateQueries({ queryKey: ['interviews'] });
       qc.invalidateQueries({ queryKey: ['application'] });
     },
-    onError: () => toast.error('Failed to update interview round'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to update interview round')),
   });
 }
 
@@ -53,7 +63,7 @@ export function useDeleteInterviewRound() {
       qc.invalidateQueries({ queryKey: ['application'] });
       toast.success('Interview round deleted');
     },
-    onError: () => toast.error('Failed to delete interview round'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to delete interview round')),
   });
 }
 
@@ -66,7 +76,7 @@ export function useAddPrepTopic() {
       qc.invalidateQueries({ queryKey: ['interviews'] });
       qc.invalidateQueries({ queryKey: ['application'] });
     },
-    onError: () => toast.error('Failed to add prep topic'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to add prep topic')),
   });
 }
 
@@ -79,7 +89,7 @@ export function useUpdatePrepTopic() {
       qc.invalidateQueries({ queryKey: ['interviews'] });
       qc.invalidateQueries({ queryKey: ['application'] });
     },
-    onError: () => toast.error('Failed to update prep topic'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to update prep topic')),
   });
 }
 
@@ -91,6 +101,6 @@ export function useDeletePrepTopic() {
       qc.invalidateQueries({ queryKey: ['interviews'] });
       qc.invalidateQueries({ queryKey: ['application'] });
     },
-    onError: () => toast.error('Failed to delete prep topic'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to delete prep topic')),
   });
 }

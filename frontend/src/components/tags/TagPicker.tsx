@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { useTags, useCreateTag, useAssignTag, useUnassignTag } from '@/hooks/use-tags';
 import type { Tag } from '@/types';
 import { Plus, X, Tags } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Props {
   applicationId: string;
@@ -24,26 +25,41 @@ export default function TagPicker({ applicationId, assignedTags }: Props) {
 
   function handleCreateAndAssign() {
     if (!newTagName.trim()) return;
-    createTag.mutateAsync({ name: newTagName.trim() }).then((tag: Tag) => {
-      assignTag.mutate({ applicationId, tagId: tag.id });
-      setNewTagName('');
-    });
+    createTag
+      .mutateAsync({ name: newTagName.trim() })
+      .then((tag: Tag) => {
+        assignTag.mutate({ applicationId, tagId: tag.id });
+        setNewTagName('');
+      })
+      .catch(() => {
+        // error is handled by the mutation's onError
+      });
   }
 
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-1">
         {assignedTags.map(({ tag }) => (
-          <Badge
-            key={tag.id}
-            variant="secondary"
-            className="text-xs cursor-pointer group"
-            style={tag.color ? { backgroundColor: tag.color + '20', color: tag.color } : undefined}
-            onClick={() => unassignTag.mutate({ applicationId, tagId: tag.id })}
-          >
-            {tag.name}
-            <X className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100" />
-          </Badge>
+          <TooltipProvider key={tag.id} delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge
+                  variant="secondary"
+                  className="text-xs cursor-pointer group"
+                  style={tag.color ? { backgroundColor: tag.color + '20', color: tag.color } : undefined}
+                  onClick={() => unassignTag.mutate({ applicationId, tagId: tag.id })}
+                  role="button"
+                  aria-label={`Remove tag ${tag.name}`}
+                >
+                  {tag.name}
+                  <X className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100" />
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="text-xs">
+                Click to remove
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         ))}
         <Popover>
           <PopoverTrigger asChild>

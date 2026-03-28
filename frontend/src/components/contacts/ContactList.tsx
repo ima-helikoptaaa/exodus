@@ -6,7 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import ContactForm from './ContactForm';
 import { useDeleteContact } from '@/hooks/use-contacts';
 import type { Contact } from '@/types';
-import { Mail, Phone, ExternalLink, Trash2, Pencil, Users } from 'lucide-react';
+import { Mail, Phone, ExternalLink, Trash2, Pencil, Users, Clock } from 'lucide-react';
+import { format } from 'date-fns';
 
 const ROLE_LABELS: Record<string, string> = {
   RECRUITER: 'Recruiter',
@@ -71,6 +72,12 @@ export default function ContactList({ contacts, applicationId, showAddButton }: 
                       </a>
                     )}
                   </div>
+                  {contact.lastContactedAt && (
+                    <div className="flex items-center gap-1 mt-1.5 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      Last contacted: {format(new Date(contact.lastContactedAt), 'MMM d, yyyy')}
+                    </div>
+                  )}
                   {contact.notes && (
                     <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{contact.notes}</p>
                   )}

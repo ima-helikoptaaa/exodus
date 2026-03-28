@@ -27,11 +27,13 @@ export class CreateApplicationDto {
   @IsOptional()
   @IsInt()
   @Min(0)
+  @Max(100_000_000)
   salaryMin?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
+  @Max(100_000_000)
   salaryMax?: number;
 
   @IsOptional()

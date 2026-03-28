@@ -35,6 +35,8 @@ export default function KanbanCard({ app, isOverlay }: Props) {
       {...(isOverlay ? {} : attributes)}
       {...(isOverlay ? {} : listeners)}
       className="p-3 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow"
+      role="button"
+      aria-label={`${app.company.name} - ${app.role}`}
       onClick={() => {
         if (!isDragging) {
           navigate(`/applications/${app.id}`);

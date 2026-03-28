@@ -1,12 +1,12 @@
-import { IsString, IsOptional, MaxLength, MinLength } from 'class-validator';
+import { IsString, IsOptional, MaxLength, MinLength, ValidateIf } from 'class-validator';
 
 export class CreateNoteDto {
-  @IsOptional()
-  @IsString()
+  @ValidateIf((o) => !o.interviewRoundId)
+  @IsString({ message: 'Either applicationId or interviewRoundId is required' })
   applicationId?: string;
 
-  @IsOptional()
-  @IsString()
+  @ValidateIf((o) => !o.applicationId)
+  @IsString({ message: 'Either applicationId or interviewRoundId is required' })
   interviewRoundId?: string;
 
   @IsString()

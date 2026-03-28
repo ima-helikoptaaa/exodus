@@ -16,6 +16,8 @@ export class ApplicationsController {
     @Query('tagIds') tagIds?: string,
     @Query('sortBy') sortBy?: string,
     @Query('sortOrder') sortOrder?: 'asc' | 'desc',
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ) {
     return this.applicationsService.findAll({
       stage,
@@ -23,6 +25,8 @@ export class ApplicationsController {
       tagIds: tagIds ? tagIds.split(',') : undefined,
       sortBy,
       sortOrder,
+      page: page ? parseInt(page) : undefined,
+      limit: limit ? parseInt(limit) : undefined,
     });
   }
 

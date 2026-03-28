@@ -7,8 +7,8 @@ import { UpdateContactDto } from './dto/update-contact.dto.js';
 export class ContactsService {
   constructor(private prisma: PrismaService) {}
 
-  findAll(applicationId?: string, search?: string) {
-    const where: any = {};
+  findAll(applicationId?: string, search?: string, page = 1, limit = 50) {
+    const where: Record<string, unknown> = {};
     if (applicationId) where.applicationId = applicationId;
     if (search) {
       where.OR = [
@@ -21,6 +21,8 @@ export class ContactsService {
       where,
       include: { application: { include: { company: true } } },
       orderBy: { updatedAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
   }
 
@@ -42,9 +44,11 @@ export class ContactsService {
   }
 
   update(id: string, dto: UpdateContactDto) {
-    const { lastContactedAt, ...rest } = dto as any;
-    const data: any = { ...rest };
-    if (lastContactedAt) data.lastContactedAt = new Date(lastContactedAt);
+    const { lastContactedAt, ...rest } = dto;
+    const data: Record<string, unknown> = { ...rest };
+    if (lastContactedAt !== undefined) {
+      data.lastContactedAt = lastContactedAt ? new Date(lastContactedAt) : null;
+    }
     return this.prisma.contact.update({ where: { id }, data });
   }
 

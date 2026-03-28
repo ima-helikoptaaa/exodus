@@ -31,19 +31,19 @@ export class DashboardService {
     const since = new Date();
     since.setDate(since.getDate() - days);
 
-    const apps = await this.prisma.application.findMany({
-      where: { appliedDate: { gte: since } },
-      select: { appliedDate: true },
-    });
+    const grouped: { date: Date; count: bigint }[] = await this.prisma.$queryRaw`
+      SELECT DATE("appliedDate") as date, COUNT(*)::bigint as count
+      FROM applications
+      WHERE "appliedDate" >= ${since}
+      GROUP BY DATE("appliedDate")
+      ORDER BY date
+    `;
 
     const dayMap = new Map<string, number>();
-    for (const app of apps) {
-      if (!app.appliedDate) continue;
-      const key = app.appliedDate.toISOString().slice(0, 10);
-      dayMap.set(key, (dayMap.get(key) ?? 0) + 1);
+    for (const row of grouped) {
+      dayMap.set(new Date(row.date).toISOString().slice(0, 10), Number(row.count));
     }
 
-    // Fill in missing days with 0
     const result: { date: string; count: number }[] = [];
     const current = new Date(since);
     const today = new Date();
@@ -86,18 +86,19 @@ export class DashboardService {
   async getActivityHeatmap(months = 6) {
     const since = new Date();
     since.setMonth(since.getMonth() - months);
-    since.setDate(1); // start from beginning of that month
+    since.setDate(1);
 
-    const apps = await this.prisma.application.findMany({
-      where: { appliedDate: { gte: since } },
-      select: { appliedDate: true },
-    });
+    const grouped: { date: Date; count: bigint }[] = await this.prisma.$queryRaw`
+      SELECT DATE("appliedDate") as date, COUNT(*)::bigint as count
+      FROM applications
+      WHERE "appliedDate" >= ${since}
+      GROUP BY DATE("appliedDate")
+      ORDER BY date
+    `;
 
     const dayMap = new Map<string, number>();
-    for (const app of apps) {
-      if (!app.appliedDate) continue;
-      const key = app.appliedDate.toISOString().slice(0, 10);
-      dayMap.set(key, (dayMap.get(key) ?? 0) + 1);
+    for (const row of grouped) {
+      dayMap.set(new Date(row.date).toISOString().slice(0, 10), Number(row.count));
     }
 
     const result: { date: string; count: number }[] = [];

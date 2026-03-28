@@ -2,6 +2,16 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import api from '@/lib/api';
 import type { Contact } from '@/types';
+import axios from 'axios';
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  if (axios.isAxiosError(error)) {
+    const msg = error.response?.data?.message;
+    if (typeof msg === 'string') return msg;
+    if (Array.isArray(msg)) return msg.join(', ');
+  }
+  return fallback;
+}
 
 export function useContacts(applicationId?: string) {
   return useQuery<Contact[]>({
@@ -20,7 +30,7 @@ export function useCreateContact() {
       qc.invalidateQueries({ queryKey: ['application'] });
       toast.success('Contact added');
     },
-    onError: () => toast.error('Failed to add contact'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to add contact')),
   });
 }
 
@@ -34,7 +44,7 @@ export function useUpdateContact() {
       qc.invalidateQueries({ queryKey: ['application'] });
       toast.success('Contact updated');
     },
-    onError: () => toast.error('Failed to update contact'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to update contact')),
   });
 }
 
@@ -47,6 +57,6 @@ export function useDeleteContact() {
       qc.invalidateQueries({ queryKey: ['application'] });
       toast.success('Contact deleted');
     },
-    onError: () => toast.error('Failed to delete contact'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to delete contact')),
   });
 }

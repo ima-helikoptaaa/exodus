@@ -11,5 +11,16 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://exodus:exodus_dev@postgres:5432/exodus?schema=public
+      CORS_ORIGIN: http://localhost:5173
+      PORT: "3000"
+    depends_on:
+      - postgres
+
 volumes:
   pgdata:

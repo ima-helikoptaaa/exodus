@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAddPrepTopic, useUpdatePrepTopic, useDeletePrepTopic } from '@/hooks/use-interviews';
 import type { PrepTopic } from '@/types';
-import { Plus, Trash2, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, Link } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface Props {
   roundId: string;
@@ -13,14 +14,28 @@ interface Props {
 
 export default function PrepTopicChecklist({ roundId, topics }: Props) {
   const [newTitle, setNewTitle] = useState('');
+  const [newResourceUrl, setNewResourceUrl] = useState('');
   const addTopic = useAddPrepTopic();
   const updateTopic = useUpdatePrepTopic();
   const deleteTopic = useDeletePrepTopic();
+  const [editingUrlId, setEditingUrlId] = useState<string | null>(null);
+  const [editingUrl, setEditingUrl] = useState('');
 
   function handleAdd() {
     if (!newTitle.trim()) return;
-    addTopic.mutate({ roundId, title: newTitle.trim() });
+    addTopic.mutate({
+      roundId,
+      title: newTitle.trim(),
+      ...(newResourceUrl.trim() ? { resourceUrl: newResourceUrl.trim() } : {}),
+    } as { roundId: string; title: string });
     setNewTitle('');
+    setNewResourceUrl('');
+  }
+
+  function saveResourceUrl(topicId: string) {
+    updateTopic.mutate({ id: topicId, resourceUrl: editingUrl.trim() || null });
+    setEditingUrlId(null);
+    setEditingUrl('');
   }
 
   return (
@@ -33,20 +48,55 @@ export default function PrepTopicChecklist({ roundId, topics }: Props) {
             onCheckedChange={(checked) =>
               updateTopic.mutate({ id: topic.id, completed: !!checked })
             }
+            aria-label={`Mark "${topic.title}" as ${topic.completed ? 'incomplete' : 'complete'}`}
           />
           <span className={`text-sm flex-1 ${topic.completed ? 'line-through text-muted-foreground' : ''}`}>
             {topic.title}
           </span>
           {topic.resourceUrl && (
-            <a href={topic.resourceUrl} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+            <a href={topic.resourceUrl} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground" aria-label="Open resource link">
               <ExternalLink className="h-3 w-3" />
             </a>
           )}
+          <Popover open={editingUrlId === topic.id} onOpenChange={(open) => {
+            if (open) {
+              setEditingUrlId(topic.id);
+              setEditingUrl(topic.resourceUrl ?? '');
+            } else {
+              setEditingUrlId(null);
+            }
+          }}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 opacity-0 group-hover:opacity-100"
+                aria-label="Edit resource URL"
+              >
+                <Link className="h-3 w-3" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-2" align="end">
+              <div className="flex gap-1">
+                <Input
+                  value={editingUrl}
+                  onChange={(e) => setEditingUrl(e.target.value)}
+                  placeholder="https://..."
+                  className="h-7 text-xs"
+                  onKeyDown={(e) => e.key === 'Enter' && saveResourceUrl(topic.id)}
+                />
+                <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => saveResourceUrl(topic.id)}>
+                  Save
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
           <Button
             variant="ghost"
             size="icon"
             className="h-6 w-6 opacity-0 group-hover:opacity-100"
             onClick={() => deleteTopic.mutate(topic.id)}
+            aria-label={`Delete prep topic "${topic.title}"`}
           >
             <Trash2 className="h-3 w-3" />
           </Button>

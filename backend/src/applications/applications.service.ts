@@ -14,10 +14,12 @@ export class ApplicationsService {
     tagIds?: string[];
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
+    page?: number;
+    limit?: number;
   }) {
-    const { stage, search, tagIds, sortBy = 'updatedAt', sortOrder = 'desc' } = params;
+    const { stage, search, tagIds, sortBy = 'updatedAt', sortOrder = 'desc', page = 1, limit = 50 } = params;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (stage) where.stage = stage;
     if (search) {
       where.OR = [
@@ -38,6 +40,8 @@ export class ApplicationsService {
         _count: { select: { interviewRounds: true, notes: true, contacts: true } },
       },
       orderBy: { [sortBy]: sortOrder },
+      skip: (page - 1) * limit,
+      take: limit,
     });
   }
 

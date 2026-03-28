@@ -30,6 +30,7 @@ export default function ContactForm({ applicationId, contact, trigger }: Props) 
       linkedIn: fd.get('linkedIn') || undefined,
       role: fd.get('role'),
       company: fd.get('company') || undefined,
+      lastContactedAt: fd.get('lastContactedAt') || (contact ? null : undefined),
       notes: fd.get('notes') || undefined,
       applicationId: applicationId || undefined,
     };
@@ -94,6 +95,18 @@ export default function ContactForm({ applicationId, contact, trigger }: Props) 
               <Label htmlFor="company">Company</Label>
               <Input id="company" name="company" defaultValue={contact?.company ?? ''} />
             </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="lastContactedAt">Last Contacted</Label>
+              <Input
+                id="lastContactedAt"
+                name="lastContactedAt"
+                type="date"
+                defaultValue={contact?.lastContactedAt ? contact.lastContactedAt.slice(0, 10) : ''}
+              />
+            </div>
+            <div />
           </div>
           <div className="space-y-1">
             <Label htmlFor="notes">Notes</Label>

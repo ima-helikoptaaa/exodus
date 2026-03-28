@@ -2,6 +2,16 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import api from '@/lib/api';
 import type { Application, PipelineStage } from '@/types';
+import axios from 'axios';
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  if (axios.isAxiosError(error)) {
+    const msg = error.response?.data?.message;
+    if (typeof msg === 'string') return msg;
+    if (Array.isArray(msg)) return msg.join(', ');
+  }
+  return fallback;
+}
 
 export function useApplications(params?: { stage?: PipelineStage; search?: string }) {
   return useQuery<Application[]>({
@@ -26,7 +36,7 @@ export function useCreateApplication() {
       qc.invalidateQueries({ queryKey: ['applications'] });
       toast.success('Application created');
     },
-    onError: () => toast.error('Failed to create application'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to create application')),
   });
 }
 
@@ -40,7 +50,7 @@ export function useUpdateApplication() {
       qc.invalidateQueries({ queryKey: ['application', variables.id] });
       toast.success('Application updated');
     },
-    onError: () => toast.error('Failed to update application'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to update application')),
   });
 }
 
@@ -55,7 +65,7 @@ export function useUpdateStage() {
       qc.invalidateQueries({ queryKey: ['dashboard'] });
       toast.success('Stage updated');
     },
-    onError: () => toast.error('Failed to update stage'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to update stage')),
   });
 }
 
@@ -68,6 +78,6 @@ export function useDeleteApplication() {
       qc.invalidateQueries({ queryKey: ['dashboard'] });
       toast.success('Application deleted');
     },
-    onError: () => toast.error('Failed to delete application'),
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to delete application')),
   });
 }

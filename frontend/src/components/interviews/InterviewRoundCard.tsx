@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { useUpdateInterviewRound, useDeleteInterviewRound } from '@/hooks/use-in
 import { INTERVIEW_TYPE_LABELS } from '@/types';
 import type { InterviewRound, InterviewStatus } from '@/types';
 import { format } from 'date-fns';
-import { ChevronDown, ChevronUp, Trash2, Pencil, Star } from 'lucide-react';
+import { ChevronDown, ChevronUp, Trash2, Pencil, Star, Check } from 'lucide-react';
 
 const STATUS_COLORS: Record<InterviewStatus, string> = {
   UPCOMING: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
@@ -23,12 +23,22 @@ export default function InterviewRoundCard({ round, applicationId }: { round: In
   const [expanded, setExpanded] = useState(false);
   const [reflection, setReflection] = useState(round.reflection ?? '');
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [reflectionSaved, setReflectionSaved] = useState(false);
+  const savedTimer = useRef<ReturnType<typeof setTimeout>>();
   const updateRound = useUpdateInterviewRound();
   const deleteRound = useDeleteInterviewRound();
 
+  useEffect(() => () => clearTimeout(savedTimer.current), []);
+
   function saveReflection() {
     if (reflection !== (round.reflection ?? '')) {
-      updateRound.mutate({ id: round.id, reflection });
+      updateRound.mutate({ id: round.id, reflection }, {
+        onSuccess: () => {
+          setReflectionSaved(true);
+          clearTimeout(savedTimer.current);
+          savedTimer.current = setTimeout(() => setReflectionSaved(false), 2000);
+        },
+      });
     }
   }
 
@@ -133,7 +143,14 @@ export default function InterviewRoundCard({ round, applicationId }: { round: In
           <PrepTopicChecklist roundId={round.id} topics={round.prepTopics} />
 
           <div>
-            <p className="text-xs font-medium text-muted-foreground mb-1">Post-Interview Reflection</p>
+            <div className="flex items-center gap-2 mb-1">
+              <p className="text-xs font-medium text-muted-foreground">Post-Interview Reflection</p>
+              {reflectionSaved && (
+                <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 animate-in fade-in">
+                  <Check className="h-3 w-3" /> Saved
+                </span>
+              )}
+            </div>
             <Textarea
               value={reflection}
               onChange={(e) => setReflection(e.target.value)}

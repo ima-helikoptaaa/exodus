@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useContacts } from '@/hooks/use-contacts';
 import ContactList from '@/components/contacts/ContactList';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, Loader2, AlertTriangle } from 'lucide-react';
 import { useDebounce } from '@/hooks/use-debounce';
 
 export default function ContactsPage() {
-  const { data: contacts = [] } = useContacts();
+  const { data: contacts = [], isLoading, isError } = useContacts();
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search);
 
@@ -31,7 +31,19 @@ export default function ContactsPage() {
           className="pl-9 max-w-sm"
         />
       </div>
-      <ContactList contacts={filtered} showAddButton />
+      {isLoading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      ) : isError ? (
+        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+          <AlertTriangle className="h-10 w-10 mb-3 opacity-40" />
+          <p className="text-sm font-medium">Failed to load contacts</p>
+          <p className="text-xs mt-1">Please try refreshing the page</p>
+        </div>
+      ) : (
+        <ContactList contacts={filtered} showAddButton />
+      )}
     </div>
   );
 }

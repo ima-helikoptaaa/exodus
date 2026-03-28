@@ -7,11 +7,13 @@ import { UpdateCompanyDto } from './dto/update-company.dto.js';
 export class CompaniesService {
   constructor(private prisma: PrismaService) {}
 
-  findAll(search?: string) {
+  findAll(search?: string, page = 1, limit = 50) {
     return this.prisma.company.findMany({
       where: search ? { name: { contains: search, mode: 'insensitive' } } : undefined,
       include: { _count: { select: { applications: true } } },
       orderBy: { name: 'asc' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
   }
 
@@ -30,11 +32,11 @@ export class CompaniesService {
     return this.prisma.company.update({ where: { id }, data: dto });
   }
 
-  findOrCreate(name: string) {
-    return this.prisma.company.upsert({
-      where: { id: 'none' },
-      update: {},
-      create: { name },
+  async findOrCreate(name: string) {
+    const existing = await this.prisma.company.findFirst({
+      where: { name: { equals: name, mode: 'insensitive' } },
     });
+    if (existing) return existing;
+    return this.prisma.company.create({ data: { name } });
   }
 }
