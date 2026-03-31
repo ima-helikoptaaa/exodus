@@ -59,7 +59,7 @@ export class AiService {
     });
 
     const response = await this.client.messages.create({
-      model: 'us.anthropic.claude-sonnet-4-20250514-v1:0',
+      model: 'us.anthropic.claude-opus-4-6-v1:0',
       max_tokens: 4096,
       system: RESUME_SYSTEM_PROMPT,
       messages: [{ role: 'user', content: userPrompt }],
