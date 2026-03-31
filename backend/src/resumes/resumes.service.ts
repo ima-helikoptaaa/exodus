@@ -6,23 +6,22 @@ import { SaveVersionDto } from './dto/save-version.dto.js';
 
 const DEFAULT_LATEX = `\\documentclass[11pt,a4paper]{article}
 \\usepackage[margin=0.75in]{geometry}
-\\usepackage{enumitem}
 \\usepackage{hyperref}
 
 \\begin{document}
 
 \\begin{center}
   {\\LARGE\\textbf{Your Name}}\\\\[4pt]
-  your.email@example.com \\textbar{} (123) 456-7890 \\textbar{} linkedin.com/in/yourname
+  your.email@example.com $\\mid$ (123) 456-7890 $\\mid$ linkedin.com/in/yourname
 \\end{center}
 
 \\section*{Summary}
 Your professional summary here.
 
 \\section*{Experience}
-\\textbf{Job Title} \\hfill Company Name\\\\
-\\textit{Start Date -- End Date} \\hfill Location
-\\begin{itemize}[nosep]
+\\textbf{Job Title} --- \\textbf{Company Name}\\\\
+\\textit{Start Date -- End Date} --- Location
+\\begin{itemize}
   \\item Achievement or responsibility
 \\end{itemize}
 
@@ -31,8 +30,8 @@ Your professional summary here.
 \\textbf{Frameworks:} React, Node.js, NestJS
 
 \\section*{Education}
-\\textbf{Degree} \\hfill University Name\\\\
-\\textit{Year} \\hfill Location
+\\textbf{Degree} --- \\textbf{University Name}\\\\
+\\textit{Year} --- Location
 
 \\end{document}
 `;

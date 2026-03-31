@@ -12,12 +12,19 @@ interface Props {
   resume?: Resume;
   trigger?: React.ReactNode;
   onDone?: (resume: Resume) => void;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export default function ResumeForm({ resume, trigger, onDone }: Props) {
-  const [open, setOpen] = useState(false);
+export default function ResumeForm({ resume, trigger, onDone, defaultOpen, onOpenChange }: Props) {
+  const [open, setOpen] = useState(defaultOpen ?? false);
   const create = useCreateResume();
   const update = useUpdateResume();
+
+  const handleOpenChange = (v: boolean) => {
+    setOpen(v);
+    onOpenChange?.(v);
+  };
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -36,7 +43,7 @@ export default function ResumeForm({ resume, trigger, onDone }: Props) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {trigger ?? (
           <Button size="sm">

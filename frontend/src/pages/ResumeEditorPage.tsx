@@ -32,6 +32,7 @@ export default function ResumeEditorPage() {
   const [mobileView, setMobileView] = useState<'editor' | 'preview'>('editor');
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [changeNote, setChangeNote] = useState('');
+  const [renderKey, setRenderKey] = useState(0);
 
   useEffect(() => {
     if (resume?.currentVersion?.latexSource && !dirty) {
@@ -72,6 +73,7 @@ export default function ResumeEditorPage() {
   const handleCustomizeApply = useCallback((source: string) => {
     setLatex(source);
     setDirty(true);
+    setRenderKey((k) => k + 1);
   }, []);
 
   if (isLoading) {
@@ -157,7 +159,7 @@ export default function ResumeEditorPage() {
               <GripVertical className="h-4 w-4 text-muted-foreground" />
             </PanelResizeHandle>
             <Panel defaultSize={50} minSize={30}>
-              <LatexPreview latexSource={latex} />
+              <LatexPreview latexSource={latex} renderKey={renderKey} />
             </Panel>
           </PanelGroup>
         </div>
@@ -170,7 +172,7 @@ export default function ResumeEditorPage() {
             </div>
           ) : (
             <div className="flex-1">
-              <LatexPreview latexSource={latex} />
+              <LatexPreview latexSource={latex} renderKey={renderKey} />
             </div>
           )}
         </div>

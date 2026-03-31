@@ -57,6 +57,8 @@ export default function ResumesListPage() {
         <ResumeForm
           resume={editResume}
           trigger={<span />}
+          defaultOpen
+          onOpenChange={(open) => { if (!open) setEditResume(undefined); }}
           onDone={() => setEditResume(undefined)}
         />
       )}

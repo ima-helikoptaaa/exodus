@@ -94,18 +94,19 @@ export default function CustomizeDialog({ resumeId, onApply, defaultJobDescripti
               <p className="text-sm text-muted-foreground mt-1 bg-muted p-3 rounded-md">{result.reasoning}</p>
             </div>
             <div>
-              <Label>Generated LaTeX Preview</Label>
-              <pre className="text-xs font-mono bg-muted p-3 rounded-md max-h-64 overflow-y-auto mt-1">
-                {result.latexSource.slice(0, 2000)}
-                {result.latexSource.length > 2000 && '\n... (truncated)'}
+              <Label>Generated LaTeX ({result.latexSource.length} chars)</Label>
+              <pre className="text-xs font-mono bg-muted p-3 rounded-md max-h-80 overflow-y-auto mt-1 whitespace-pre-wrap break-all">
+                {result.latexSource}
               </pre>
             </div>
-            <DialogFooter>
+            <div className="flex justify-between gap-2 pt-2">
               <Button variant="outline" onClick={() => setResult(null)}>
                 Regenerate
               </Button>
-              <Button onClick={handleApply}>Apply to Editor</Button>
-            </DialogFooter>
+              <Button size="lg" onClick={handleApply}>
+                Apply to Editor
+              </Button>
+            </div>
           </div>
         )}
       </DialogContent>

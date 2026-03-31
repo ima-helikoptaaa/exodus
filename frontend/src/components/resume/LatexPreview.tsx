@@ -1,44 +1,47 @@
-import { useMemo, useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 
 interface Props {
   latexSource: string;
+  renderKey?: number;
 }
 
-export default function LatexPreview({ latexSource }: Props) {
+export default function LatexPreview({ latexSource, renderKey }: Props) {
   const [html, setHtml] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const [compiling, setCompiling] = useState(false);
+  const latexRef = useRef(latexSource);
+  latexRef.current = latexSource;
 
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-
-    if (!latexSource.trim()) {
+  const compile = useCallback(async () => {
+    const source = latexRef.current;
+    if (!source.trim()) {
       setHtml(null);
       setError(null);
       return;
     }
+    setCompiling(true);
+    try {
+      const latexJs = await import('latex.js');
+      const generator = new latexJs.HtmlGenerator({ hyphenate: false });
+      const doc = latexJs.parse(source, { generator });
+      const domFragment = doc.htmlDocument();
+      const serializer = new XMLSerializer();
+      setHtml(serializer.serializeToString(domFragment));
+      setError(null);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      setError(message);
+    } finally {
+      setCompiling(false);
+    }
+  }, []);
 
-    debounceRef.current = setTimeout(async () => {
-      try {
-        // Dynamic import for latex.js (ESM compatible)
-        const latexJs = await import('latex.js');
-        const generator = new latexJs.HtmlGenerator({ hyphenate: false });
-        const doc = latexJs.parse(latexSource, { generator });
-        const domFragment = doc.htmlDocument();
-        const serializer = new XMLSerializer();
-        setHtml(serializer.serializeToString(domFragment));
-        setError(null);
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Unknown error';
-        setError(message);
-        setHtml(null);
-      }
-    }, 500);
-
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [latexSource]);
+  // Auto-compile on renderKey change (explicit recompile trigger)
+  useEffect(() => {
+    compile();
+  }, [renderKey, compile]);
 
   if (!latexSource.trim()) {
     return (
@@ -48,32 +51,43 @@ export default function LatexPreview({ latexSource }: Props) {
     );
   }
 
-  if (error) {
-    return (
-      <div className="p-4 text-sm font-mono text-destructive whitespace-pre-wrap overflow-auto h-full">
-        <strong>LaTeX Rendering Error:</strong>
-        <br />
-        {error}
-      </div>
-    );
-  }
-
-  if (!html) {
-    return (
-      <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-        Rendering...
-      </div>
-    );
-  }
-
   return (
-    <div className="h-full overflow-auto bg-white">
-      <iframe
-        srcDoc={html}
-        title="LaTeX Preview"
-        className="w-full h-full border-0"
-        sandbox="allow-same-origin"
-      />
+    <div className="h-full flex flex-col">
+      <div className="flex items-center gap-2 p-1.5 border-b bg-muted/50 shrink-0">
+        <Button size="sm" variant="ghost" onClick={compile} disabled={compiling} className="text-xs h-7">
+          <RefreshCw className={`h-3.5 w-3.5 mr-1 ${compiling ? 'animate-spin' : ''}`} />
+          {compiling ? 'Compiling...' : 'Recompile'}
+        </Button>
+        {error && <span className="text-xs text-destructive truncate">Error in LaTeX</span>}
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-auto">
+        {error ? (
+          <div className="p-4 text-sm font-mono whitespace-pre-wrap overflow-auto">
+            <div className="text-destructive mb-3">
+              <strong>LaTeX Rendering Error:</strong>
+              <br />
+              {error}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Note: The live preview uses latex.js which has limited package support.
+              Commands like \hfill, titlesec, enumitem options may not render.
+              Your LaTeX will still compile correctly with a full TeX distribution (pdflatex).
+            </p>
+          </div>
+        ) : html ? (
+          <iframe
+            srcDoc={html}
+            title="LaTeX Preview"
+            className="w-full h-full border-0 bg-white"
+            sandbox="allow-same-origin"
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
+            {compiling ? 'Compiling...' : 'Click Recompile to render preview'}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
