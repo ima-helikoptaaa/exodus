@@ -4,6 +4,7 @@ import { PipelineStage } from '@prisma/client';
 import { CreateApplicationDto } from './dto/create-application.dto.js';
 import { UpdateApplicationDto } from './dto/update-application.dto.js';
 import { UpdateStageDto } from './dto/update-stage.dto.js';
+import { LinkResumeDto } from './dto/link-resume.dto.js';
 
 @Controller('applications')
 export class ApplicationsController {
@@ -53,5 +54,20 @@ export class ApplicationsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.applicationsService.remove(id);
+  }
+
+  @Get(':id/resume')
+  getLinkedResume(@Param('id') id: string) {
+    return this.applicationsService.getLinkedResume(id);
+  }
+
+  @Post(':id/resume')
+  linkResume(@Param('id') id: string, @Body() dto: LinkResumeDto) {
+    return this.applicationsService.linkResume(id, dto);
+  }
+
+  @Delete(':id/resume/:resumeId')
+  unlinkResume(@Param('id') id: string, @Param('resumeId') resumeId: string) {
+    return this.applicationsService.unlinkResume(id, resumeId);
   }
 }

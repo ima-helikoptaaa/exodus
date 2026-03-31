@@ -116,6 +116,7 @@ export interface Application {
   interviewRounds: InterviewRound[];
   contacts: Contact[];
   notes: Note[];
+  applicationResumes?: ApplicationResume[];
   _count?: { interviewRounds: number; notes: number; contacts: number };
 }
 
@@ -124,6 +125,77 @@ export interface DashboardStats {
   byStage: { stage: PipelineStage; _count: number }[];
   responseRate: number;
   offers: number;
+}
+
+// Resume types
+
+export type ProfileSection =
+  | 'SUMMARY'
+  | 'EXPERIENCE'
+  | 'SKILLS'
+  | 'PROJECTS'
+  | 'EDUCATION'
+  | 'ACHIEVEMENTS'
+  | 'CERTIFICATIONS';
+
+export const PROFILE_SECTION_LABELS: Record<ProfileSection, string> = {
+  SUMMARY: 'Professional Summary',
+  EXPERIENCE: 'Work Experience',
+  SKILLS: 'Skills',
+  PROJECTS: 'Projects',
+  EDUCATION: 'Education',
+  ACHIEVEMENTS: 'Achievements',
+  CERTIFICATIONS: 'Certifications',
+};
+
+export const PROFILE_SECTIONS: ProfileSection[] = [
+  'SUMMARY',
+  'EXPERIENCE',
+  'SKILLS',
+  'PROJECTS',
+  'EDUCATION',
+  'ACHIEVEMENTS',
+  'CERTIFICATIONS',
+];
+
+export interface MasterProfile {
+  id: string;
+  sections: Record<ProfileSection, string>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Resume {
+  id: string;
+  name: string;
+  description?: string;
+  currentVersionId?: string;
+  currentVersion?: ResumeVersion;
+  createdAt: string;
+  updatedAt: string;
+  versions?: ResumeVersion[];
+  applicationResumes?: ApplicationResume[];
+  _count?: { versions: number; applicationResumes: number };
+}
+
+export interface ResumeVersion {
+  id: string;
+  resumeId: string;
+  latexSource: string;
+  versionNumber: number;
+  changeNote?: string;
+  createdAt: string;
+}
+
+export interface ApplicationResume {
+  id: string;
+  applicationId: string;
+  resumeId: string;
+  resumeVersionId: string;
+  resume?: Resume;
+  resumeVersion?: ResumeVersion;
+  application?: Application;
+  linkedAt: string;
 }
 
 export const STAGE_LABELS: Record<PipelineStage, string> = {

@@ -85,6 +85,7 @@ model Application {
   contacts        Contact[]
   notes           Note[]
   tags            TagsOnApplications[]
+  applicationResumes ApplicationResume[]
 
   @@index([stage])
   @@index([companyId])
@@ -175,6 +176,60 @@ model Tag {
   applications TagsOnApplications[]
 
   @@map("tags")
+}
+
+model MasterProfile {
+  id        String   @id @default(cuid())
+  sections  Json     // { "SUMMARY": "...", "EXPERIENCE": "...", ... }
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("master_profiles")
+}
+
+model Resume {
+  id               String          @id @default(cuid())
+  name             String
+  description      String?
+  currentVersionId String?         @unique
+  currentVersion   ResumeVersion?  @relation("CurrentVersion", fields: [currentVersionId], references: [id])
+  versions         ResumeVersion[] @relation("ResumeVersions")
+  applicationResumes ApplicationResume[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@map("resumes")
+}
+
+model ResumeVersion {
+  id            String   @id @default(cuid())
+  resumeId      String
+  resume        Resume   @relation("ResumeVersions", fields: [resumeId], references: [id], onDelete: Cascade)
+  latexSource   String
+  versionNumber Int
+  changeNote    String?
+  createdAt     DateTime @default(now())
+
+  currentOf          Resume?             @relation("CurrentVersion")
+  applicationResumes ApplicationResume[]
+
+  @@index([resumeId])
+  @@map("resume_versions")
+}
+
+model ApplicationResume {
+  id              String        @id @default(cuid())
+  applicationId   String
+  application     Application   @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  resumeId        String
+  resume          Resume        @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resumeVersionId String
+  resumeVersion   ResumeVersion @relation(fields: [resumeVersionId], references: [id])
+  linkedAt        DateTime      @default(now())
+
+  @@unique([applicationId, resumeId])
+  @@index([applicationId])
+  @@map("application_resumes")
 }
 
 model TagsOnApplications {

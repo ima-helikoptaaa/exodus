@@ -12,6 +12,7 @@ import ContactList from '@/components/contacts/ContactList';
 import NotesList from '@/components/notes/NotesList';
 import TagPicker from '@/components/tags/TagPicker';
 import ApplicationForm from '@/components/applications/ApplicationForm';
+import ApplicationResumeLink from '@/components/resume/ApplicationResumeLink';
 import { useUpdateStage } from '@/hooks/use-applications';
 import { STAGE_ORDER, STAGE_LABELS, STAGE_COLORS } from '@/types';
 import type { PipelineStage } from '@/types';
@@ -164,6 +165,7 @@ export default function ApplicationDetailPage() {
           <TabsTrigger value="interviews">Interviews ({app.interviewRounds.length})</TabsTrigger>
           <TabsTrigger value="contacts">Contacts ({app.contacts.length})</TabsTrigger>
           <TabsTrigger value="notes">Notes ({app.notes.length})</TabsTrigger>
+          <TabsTrigger value="resume">Resume ({app.applicationResumes?.length ?? 0})</TabsTrigger>
         </TabsList>
         <TabsContent value="interviews" className="mt-4">
           <InterviewTimeline applicationId={app.id} rounds={app.interviewRounds} />
@@ -173,6 +175,9 @@ export default function ApplicationDetailPage() {
         </TabsContent>
         <TabsContent value="notes" className="mt-4">
           <NotesList notes={app.notes} applicationId={app.id} />
+        </TabsContent>
+        <TabsContent value="resume" className="mt-4">
+          <ApplicationResumeLink applicationId={app.id} jobDescription={app.jobDescription} />
         </TabsContent>
       </Tabs>
 

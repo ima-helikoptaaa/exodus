@@ -7,6 +7,9 @@ import { ContactsModule } from './contacts/contacts.module.js';
 import { TagsModule } from './tags/tags.module.js';
 import { NotesModule } from './notes/notes.module.js';
 import { DashboardModule } from './dashboard/dashboard.module.js';
+import { ProfileModule } from './profile/profile.module.js';
+import { ResumesModule } from './resumes/resumes.module.js';
+import { AiModule } from './ai/ai.module.js';
 
 @Module({
   imports: [
@@ -18,6 +21,9 @@ import { DashboardModule } from './dashboard/dashboard.module.js';
     TagsModule,
     NotesModule,
     DashboardModule,
+    ProfileModule,
+    ResumesModule,
+    AiModule,
   ],
 })
 export class AppModule {}

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Kanban, List, Users, Briefcase, Moon, Sun } from 'lucide-react';
+import { LayoutDashboard, Kanban, List, Users, Briefcase, Moon, Sun, User, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
@@ -9,6 +9,8 @@ const links = [
   { to: '/pipeline', label: 'Pipeline', icon: Kanban },
   { to: '/applications', label: 'Applications', icon: List },
   { to: '/contacts', label: 'Contacts', icon: Users },
+  { to: '/profile', label: 'Profile', icon: User },
+  { to: '/resumes', label: 'Resumes', icon: FileText },
 ];
 
 function useTheme() {

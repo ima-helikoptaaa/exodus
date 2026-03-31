@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { PipelineStage } from '@prisma/client';
 import { CreateApplicationDto } from './dto/create-application.dto.js';
 import { UpdateApplicationDto } from './dto/update-application.dto.js';
+import { LinkResumeDto } from './dto/link-resume.dto.js';
 
 @Injectable()
 export class ApplicationsService {
@@ -57,6 +58,9 @@ export class ApplicationsService {
         },
         contacts: true,
         notes: { orderBy: { createdAt: 'desc' } },
+        applicationResumes: {
+          include: { resume: true, resumeVersion: true },
+        },
       },
     });
     if (!app) throw new NotFoundException('Application not found');
@@ -138,5 +142,43 @@ export class ApplicationsService {
 
   async remove(id: string) {
     return this.prisma.application.delete({ where: { id } });
+  }
+
+  async getLinkedResume(applicationId: string) {
+    return this.prisma.applicationResume.findMany({
+      where: { applicationId },
+      include: {
+        resume: true,
+        resumeVersion: true,
+      },
+    });
+  }
+
+  async linkResume(applicationId: string, dto: LinkResumeDto) {
+    return this.prisma.applicationResume.upsert({
+      where: {
+        applicationId_resumeId: {
+          applicationId,
+          resumeId: dto.resumeId,
+        },
+      },
+      create: {
+        applicationId,
+        resumeId: dto.resumeId,
+        resumeVersionId: dto.resumeVersionId,
+      },
+      update: {
+        resumeVersionId: dto.resumeVersionId,
+      },
+      include: { resume: true, resumeVersion: true },
+    });
+  }
+
+  async unlinkResume(applicationId: string, resumeId: string) {
+    return this.prisma.applicationResume.delete({
+      where: {
+        applicationId_resumeId: { applicationId, resumeId },
+      },
+    });
   }
 }

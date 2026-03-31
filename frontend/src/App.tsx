@@ -7,6 +7,9 @@ import PipelinePage from '@/pages/PipelinePage';
 import ApplicationsPage from '@/pages/ApplicationsPage';
 import ApplicationDetailPage from '@/pages/ApplicationDetailPage';
 import ContactsPage from '@/pages/ContactsPage';
+import MasterProfilePage from '@/pages/MasterProfilePage';
+import ResumesListPage from '@/pages/ResumesListPage';
+import ResumeEditorPage from '@/pages/ResumeEditorPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 
 const queryClient = new QueryClient({
@@ -27,6 +30,9 @@ function App() {
             <Route path="/applications" element={<ApplicationsPage />} />
             <Route path="/applications/:id" element={<ApplicationDetailPage />} />
             <Route path="/contacts" element={<ContactsPage />} />
+            <Route path="/profile" element={<MasterProfilePage />} />
+            <Route path="/resumes" element={<ResumesListPage />} />
+            <Route path="/resumes/:id" element={<ResumeEditorPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
