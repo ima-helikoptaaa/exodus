@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'react-resizable-panels';
 import { useResume, useSaveVersion, useRestoreVersion, useResumeVersions } from '@/hooks/use-resumes';
 import LatexEditor from '@/components/resume/LatexEditor';
 import LatexPreview from '@/components/resume/LatexPreview';
