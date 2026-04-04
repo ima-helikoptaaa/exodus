@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateResumeDto } from './dto/create-resume.dto.js';
 import { UpdateResumeDto } from './dto/update-resume.dto.js';
 import { SaveVersionDto } from './dto/save-version.dto.js';
+import { writeFile, readFile, rm } from 'fs/promises';
+import { mkdtemp } from 'fs/promises';
+import { join } from 'path';
+import { tmpdir } from 'os';
+import { execFile } from 'child_process';
 
 const DEFAULT_LATEX = `\\documentclass[11pt,a4paper]{article}
 \\usepackage[margin=0.75in]{geometry}
@@ -159,6 +164,42 @@ export class ResumesService {
     });
 
     return restored;
+  }
+
+  async compile(latexSource: string): Promise<Buffer> {
+    const tmpDir = await mkdtemp(join(tmpdir(), 'latex-'));
+    const texPath = join(tmpDir, 'resume.tex');
+    const pdfPath = join(tmpDir, 'resume.pdf');
+
+    try {
+      await writeFile(texPath, latexSource, 'utf-8');
+
+      await new Promise<void>((resolve, reject) => {
+        execFile(
+          'pdflatex',
+          ['-interaction=nonstopmode', '-halt-on-error', '-output-directory', tmpDir, texPath],
+          { timeout: 30_000 },
+          (error, _stdout, stderr) => {
+            if (error) {
+              // Extract meaningful LaTeX error from log
+              const logLines = stderr || error.message || '';
+              const errorMatch = logLines.match(/!(.*?)(?:\n|$)/);
+              reject(
+                new BadRequestException(
+                  errorMatch ? `LaTeX error: ${errorMatch[1].trim()}` : 'pdflatex compilation failed',
+                ),
+              );
+            } else {
+              resolve();
+            }
+          },
+        );
+      });
+
+      return await readFile(pdfPath);
+    } finally {
+      await rm(tmpDir, { recursive: true, force: true }).catch(() => {});
+    }
   }
 
   private async ensureExists(id: string) {

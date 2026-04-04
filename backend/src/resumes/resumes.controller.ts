@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, Res, Header } from '@nestjs/common';
+import type { Response } from 'express';
 import { ResumesService } from './resumes.service.js';
 import { CreateResumeDto } from './dto/create-resume.dto.js';
 import { UpdateResumeDto } from './dto/update-resume.dto.js';
 import { SaveVersionDto } from './dto/save-version.dto.js';
+import { CompileResumeDto } from './dto/compile-resume.dto.js';
 
 @Controller('resumes')
 export class ResumesController {
@@ -11,6 +13,16 @@ export class ResumesController {
   @Get()
   findAll() {
     return this.resumesService.findAll();
+  }
+
+  @Post('compile')
+  async compile(@Body() dto: CompileResumeDto, @Res() res: Response) {
+    const pdfBuffer = await this.resumesService.compile(dto.latexSource);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Length': pdfBuffer.length.toString(),
+    });
+    res.send(pdfBuffer);
   }
 
   @Get(':id')

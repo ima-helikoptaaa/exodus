@@ -103,3 +103,13 @@ export function useRestoreVersion() {
     onError: (error) => toast.error(getErrorMessage(error, 'Failed to restore version')),
   });
 }
+
+export function useCompileResume() {
+  return useMutation({
+    mutationFn: async (latexSource: string): Promise<string> => {
+      const response = await api.post('/resumes/compile', { latexSource }, { responseType: 'blob' });
+      return URL.createObjectURL(response.data);
+    },
+    onError: (error) => toast.error(getErrorMessage(error, 'Failed to compile PDF')),
+  });
+}
