@@ -11,7 +11,12 @@ RUN npx prisma generate
 COPY . .
 RUN npm run build
 
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      texlive-latex-base texlive-fonts-recommended texlive-latex-extra wget && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

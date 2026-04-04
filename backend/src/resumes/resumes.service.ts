@@ -170,6 +170,7 @@ export class ResumesService {
     const tmpDir = await mkdtemp(join(tmpdir(), 'latex-'));
     const texPath = join(tmpDir, 'resume.tex');
     const pdfPath = join(tmpDir, 'resume.pdf');
+    const logPath = join(tmpDir, 'resume.log');
 
     try {
       await writeFile(texPath, latexSource, 'utf-8');
@@ -179,14 +180,31 @@ export class ResumesService {
           'pdflatex',
           ['-interaction=nonstopmode', '-halt-on-error', '-output-directory', tmpDir, texPath],
           { timeout: 30_000 },
-          (error, _stdout, stderr) => {
+          async (error, stdout) => {
             if (error) {
-              // Extract meaningful LaTeX error from log
-              const logLines = stderr || error.message || '';
-              const errorMatch = logLines.match(/!(.*?)(?:\n|$)/);
+              // pdflatex writes errors to stdout and .log file, not stderr
+              let errorDetail = '';
+
+              // Try reading the .log file for detailed errors
+              try {
+                const log = await readFile(logPath, 'utf-8');
+                const errorLines = log
+                  .split('\n')
+                  .filter((l) => l.startsWith('!') || l.startsWith('l.'))
+                  .slice(0, 10)
+                  .join('\n');
+                if (errorLines) errorDetail = errorLines;
+              } catch {
+                // Fall back to stdout
+                const errorMatch = stdout?.match(/!(.*?)(?:\n|$)/g);
+                if (errorMatch) errorDetail = errorMatch.slice(0, 5).join('\n');
+              }
+
               reject(
                 new BadRequestException(
-                  errorMatch ? `LaTeX error: ${errorMatch[1].trim()}` : 'pdflatex compilation failed',
+                  errorDetail
+                    ? `LaTeX compilation error:\n${errorDetail}`
+                    : 'pdflatex compilation failed — check that all packages are installed',
                 ),
               );
             } else {
