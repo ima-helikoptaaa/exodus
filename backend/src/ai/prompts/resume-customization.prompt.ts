@@ -70,7 +70,7 @@ ATS systems rank candidates by keyword match. Optimize through bullet ordering a
    - Mirror exact JD phrasing: if the JD says "React.js", write "React.js" not just "React".
    - Include both acronyms AND spelled-out forms where natural: "Amazon Web Services (AWS)", "CI/CD".
    - Prioritize JD-mentioned technologies, then include remaining skills from the profile.
-   - Group logically: Languages, Frameworks/Libraries, Databases, Cloud/DevOps, Tools, AI/ML.
+   - Group logically into 3-4 categories. Combine related areas (e.g. "Languages & Frameworks", "Databases & Infrastructure", "AI/ML", "Observability & Tools").
    - Do NOT include soft skills (Communication, Teamwork) — ATS ignores them.
 
 4. STANDARD SECTION HEADINGS: Use exactly: "Experience", "Technical Skills", "Education", "Achievements".

@@ -56,7 +56,7 @@ function buildPreamble(data: ResumeData): string {
 \\usepackage[utf8]{inputenc}
 \\usepackage{lmodern}
 \\usepackage{microtype}
-\\usepackage[top=0.3in, bottom=0.3in, left=0.4in, right=0.4in]{geometry}
+\\usepackage[top=0.35in, bottom=0.35in, left=0.45in, right=0.45in]{geometry}
 \\usepackage[hidelinks]{hyperref}
 \\usepackage{enumitem}
 \\input{glyphtounicode}
@@ -78,25 +78,22 @@ function buildPreamble(data: ResumeData): string {
 \\setlength{\\partopsep}{0pt}
 \\setlength{\\leftmargini}{0.15in}
 \\renewcommand{\\baselinestretch}{1.0}
-\\setlist[itemize]{itemsep=0pt, parsep=0pt, topsep=0pt}
+\\setlist[itemize]{itemsep=1.5pt, parsep=0pt, topsep=2pt, partopsep=0pt}
 \\pagestyle{empty}
 
 % Section heading: small caps + horizontal rule
 \\newcommand{\\ressection}[1]{%
-  \\vspace{4pt}%
-  {\\large\\scshape\\raggedright #1}\\\\[-6pt]%
-  \\rule{\\textwidth}{0.4pt}\\vspace{-4pt}%
-}`;
+  \\vspace{6pt}%
+  {\\large\\scshape\\raggedright #1}\\\\[-5pt]%
+  \\rule{\\textwidth}{0.4pt}\\vspace{2pt}%
 }
 
-// ─── Shared Helpers ───
-
-/** Two-line header: bold primary + dates on row 1, italic secondary + italic location on row 2 */
-function twoLineHeader(primary: string, dates: string, secondary: string, location: string): string {
-  return `\\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}
-  \\textbf{${primary}} & ${dates} \\\\
-  \\textit{${secondary}} & \\textit{${location}} \\\\
-\\end{tabular*}`;
+% One-line role header: Title | Company .......... Dates
+\\newcommand{\\roleheader}[3]{%
+  \\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}
+    \\textbf{#1} \\textbar\\ \\textit{#2} & #3 \\\\
+  \\end{tabular*}\\vspace{1pt}%
+}`;
 }
 
 // ─── Section Builders ───
@@ -118,10 +115,9 @@ function buildHeader(data: ResumeData): string {
   });
 
   return `\\begin{center}
-  {\\LARGE\\textbf{${name}}}\\\\[2pt]
-  ${contactParts.join(' $\\mid$ ')}
-\\end{center}
-\\vspace{-6pt}`;
+  {\\LARGE\\textbf{${name}}}\\\\[3pt]
+  ${contactParts.join('\n  $\\mid$ ')}
+\\end{center}`;
 }
 
 function buildExperience(entries: ExperienceEntry[]): string {
@@ -130,7 +126,6 @@ function buildExperience(entries: ExperienceEntry[]): string {
   const blocks = entries.map((entry, i) => {
     const title = escapeLatex(entry.title);
     const company = escapeLatex(entry.company);
-    const location = escapeLatex(entry.location);
     const startDate = escapeLatex(entry.startDate);
     const endDate = escapeLatex(entry.endDate);
 
@@ -138,10 +133,9 @@ function buildExperience(entries: ExperienceEntry[]): string {
       .map((b) => `  \\item ${escapeLatex(b)}`)
       .join('\n');
 
-    const spacing = i > 0 ? '\\vspace{2pt}\n' : '';
+    const spacing = i > 0 ? '\\vspace{5pt}\n' : '';
 
-    return `${spacing}${twoLineHeader(title, `${startDate} -- ${endDate}`, company, location)}
-\\vspace{-4pt}
+    return `${spacing}\\roleheader{${title}}{${company}}{${startDate} -- ${endDate}}
 \\begin{itemize}
 ${bullets}
 \\end{itemize}`;
@@ -155,9 +149,9 @@ function buildSkills(categories: SkillCategory[]): string {
 
   const lines = categories
     .map((s) => `\\textbf{${escapeLatex(s.category)}:} ${escapeLatex(s.items)}`)
-    .join(' \\\\\n');
+    .join(' \\\\[2pt]\n');
 
-  return `\\ressection{Technical Skills}\n${lines}`;
+  return `\\ressection{Technical Skills}\n\n\\vspace{2pt}\n\\noindent\n${lines}`;
 }
 
 function buildEducation(entries: EducationEntry[]): string {
@@ -166,14 +160,15 @@ function buildEducation(entries: EducationEntry[]): string {
   const blocks = entries.map((entry) => {
     const degree = escapeLatex(entry.degree);
     const institution = escapeLatex(entry.institution);
-    const location = escapeLatex(entry.location);
     const dates = escapeLatex(entry.dates);
 
-    // Two-line format like experience: degree+dates on line 1, institution+location on line 2
-    let block = twoLineHeader(degree, dates, institution, location);
+    let block = `\\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}
+  \\textbf{${degree}} & ${dates} \\\\
+  \\textit{${institution}} \\\\
+\\end{tabular*}`;
 
     if (entry.details) {
-      block += `\n\\vspace{-4pt}\n${escapeLatex(entry.details)}`;
+      block += `\n\\vspace{1pt}\n\\noindent ${escapeLatex(entry.details)}`;
     }
 
     return block;
@@ -185,8 +180,10 @@ function buildEducation(entries: EducationEntry[]): string {
 function buildAchievements(achievements?: string[]): string {
   if (!achievements || achievements.length === 0) return '';
 
-  const items = achievements.map((a) => escapeLatex(a)).join(' $\\mid$ ');
-  return `\\ressection{Achievements}\n${items}`;
+  const items = achievements
+    .map((a) => `  \\item ${escapeLatex(a)}`)
+    .join('\n');
+  return `\\ressection{Achievements}\n\n\\begin{itemize}\n${items}\n\\end{itemize}`;
 }
 
 // ─── Main Assembler ───
