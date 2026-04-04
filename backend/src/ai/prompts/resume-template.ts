@@ -67,9 +67,9 @@ const PREAMBLE = `\\documentclass[10pt]{article}
 
 % Section heading: small caps + horizontal rule
 \\newcommand{\\ressection}[1]{%
-  \\vspace{2pt}%
-  {\\large\\scshape\\raggedright #1}\\\\[-5pt]%
-  \\rule{\\textwidth}{0.4pt}\\vspace{-7pt}%
+  \\vspace{4pt}%
+  {\\large\\scshape\\raggedright #1}\\\\[-6pt]%
+  \\rule{\\textwidth}{0.4pt}\\vspace{-4pt}%
 }`;
 
 // ─── Section Builders ───
@@ -94,7 +94,7 @@ function buildHeader(data: ResumeData): string {
   {\\LARGE\\textbf{${name}}}\\\\[2pt]
   \\small ${contactParts.join(' $\\mid$ ')}
 \\end{center}
-\\vspace{-4pt}`;
+\\vspace{-6pt}`;
 }
 
 function buildExperience(entries: ExperienceEntry[]): string {
@@ -111,15 +111,15 @@ function buildExperience(entries: ExperienceEntry[]): string {
       .map((b) => `  \\item \\small ${escapeLatex(b)}`)
       .join('\n');
 
-    const spacing = i > 0 ? '\\vspace{-2pt}\n' : '';
+    const spacing = i > 0 ? '\\vspace{2pt}\n' : '';
 
     return `${spacing}\\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}
   \\textbf{${title}} & ${startDate} -- ${endDate} \\\\
   \\textit{\\small ${company}} & \\textit{\\small ${location}} \\\\
 \\end{tabular*}
-\\vspace{-6pt}
+\\vspace{-4pt}
 \\begin{itemize}
-  \\setlength{\\itemsep}{2pt}\\setlength{\\parsep}{0pt}\\setlength{\\topsep}{0pt}
+  \\setlength{\\itemsep}{1pt}\\setlength{\\parsep}{0pt}\\setlength{\\topsep}{0pt}
 ${bullets}
 \\end{itemize}`;
   });
@@ -146,18 +146,20 @@ function buildEducation(entries: EducationEntry[]): string {
     const location = escapeLatex(entry.location);
     const dates = escapeLatex(entry.dates);
 
+    // Two-line format like experience: degree+dates on line 1, institution+location on line 2
     let block = `\\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}
-  \\textbf{${degree}} --- ${institution} & ${dates} \\\\
+  \\textbf{${degree}} & ${dates} \\\\
+  \\textit{\\small ${institution}} & \\textit{\\small ${location}} \\\\
 \\end{tabular*}`;
 
     if (entry.details) {
-      block += `\n\\small ${escapeLatex(entry.details)}`;
+      block += `\n\\vspace{-4pt}\n\\small ${escapeLatex(entry.details)}`;
     }
 
     return block;
   });
 
-  return `\\ressection{Education}\n\n${blocks.join('\n\\vspace{-2pt}\n')}`;
+  return `\\ressection{Education}\n\n${blocks.join('\n\\vspace{2pt}\n')}`;
 }
 
 function buildAchievements(achievements?: string[]): string {

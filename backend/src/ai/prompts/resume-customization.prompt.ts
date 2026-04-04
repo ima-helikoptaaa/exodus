@@ -48,13 +48,21 @@ CONTENT SELECTION RULES:
 - Use strong action verbs: Led, Built, Designed, Reduced, Increased, Automated, Shipped, Architected, Migrated.
 - Use the "Accomplished [X] as measured by [Y] by doing [Z]" formula for bullets.
 
+BULLET LENGTH — HARD CONSTRAINT:
+- Each bullet MUST be under 110 characters. This is a hard limit — count the characters.
+- Ideal length: 70-100 characters (fits on one line in the template at 10pt \\small with 0.4in margins).
+- If a bullet exceeds 110 chars, split into two bullets or ruthlessly trim filler words.
+- NEVER write bullets over 120 characters. They will wrap to 2+ lines and break the one-page layout.
+- Good: "Built LLM eval system benchmarking quality and cost; reduced AI spend by 35%" (76 chars)
+- Bad: "Built LLM evaluation systems benchmarking response quality, grounding accuracy, latency, and cost across prompts, models, and retrieval strategies" (148 chars — WAY too long)
+- Cut filler: "using", "leveraging", "utilizing", "in order to", "across the", "with the goal of" — remove these.
+
 ONE-PAGE FIT — CRITICAL (the template has fixed margins/spacing, so content volume is what matters):
 - Experience: maximum 3 roles. Taper bullets: 5-6 for most recent, 3-4 for second, 2-3 for third.
-- Each bullet: target 1 line (~90-100 characters). Allow up to ~140 chars (1.5 lines). Never exceed ~180 chars (2 lines).
-- Skills: 4-6 categories, each on one line. Be selective — only include skills relevant to the role.
-- Education: 1-2 entries. Keep details line short.
-- Achievements: optional. Include only if space allows and they're relevant. Max 3-4 short items joined with pipes.
-- TOTAL budget: ~35-40 bullet points across all experience entries is the absolute maximum for one page.
+- Maximum ~14 bullets total across all roles. This is the hard budget for one page.
+- Skills: 4-5 categories max. Keep each category line under 80 chars of items.
+- Education: 1-2 entries. Keep details line short (under 80 chars).
+- Achievements: optional. Include only if space allows and they're relevant. Max 3-4 short items.
 
 CONTENT QUALITY RULES:
 - Do NOT fabricate experience, skills, or achievements. Only use what's provided in the profile.
