@@ -4,11 +4,9 @@ export interface ResumeData {
   name: string;
   contact: string[]; // e.g. ["email@example.com", "+1-234-567-8900", "linkedin.com/in/you"]
   experience: ExperienceEntry[];
-  projects?: ProjectEntry[]; // optional projects section
   skills: SkillCategory[];
   education: EducationEntry[];
   achievements?: string[]; // optional one-liner achievements
-  sectionOrder?: string[]; // optional custom section ordering
 }
 
 export interface ExperienceEntry {
@@ -17,13 +15,6 @@ export interface ExperienceEntry {
   location: string;
   startDate: string;
   endDate: string;
-  bullets: string[];
-}
-
-export interface ProjectEntry {
-  name: string;
-  technologies: string; // e.g. "Python, React, PostgreSQL"
-  date?: string; // e.g. "Jan 2024" or "Jun 2023 -- Aug 2023"
   bullets: string[];
 }
 
@@ -185,35 +176,6 @@ function buildEducation(entries: EducationEntry[]): string {
   return `\\ressection{Education}\n\n${blocks.join('\n\\vspace{2pt}\n')}`;
 }
 
-function buildProjects(entries?: ProjectEntry[]): string {
-  if (!entries || entries.length === 0) return '';
-
-  const blocks = entries.map((entry, i) => {
-    const name = escapeLatex(entry.name);
-    const tech = escapeLatex(entry.technologies);
-    const date = entry.date ? escapeLatex(entry.date) : '';
-
-    const bullets = entry.bullets
-      .map((b) => `  \\item \\small ${escapeLatex(b)}`)
-      .join('\n');
-
-    const spacing = i > 0 ? '\\vspace{2pt}\n' : '';
-
-    // Project name + technologies on left, date on right
-    const datePart = date ? ` & ${date} \\\\` : ' \\\\';
-    return `${spacing}\\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}
-  \\textbf{${name}} $\\mid$ \\small\\textit{${tech}}${datePart}
-\\end{tabular*}
-\\vspace{-4pt}
-\\begin{itemize}
-  \\setlength{\\itemsep}{1pt}\\setlength{\\parsep}{0pt}\\setlength{\\topsep}{0pt}
-${bullets}
-\\end{itemize}`;
-  });
-
-  return `\\ressection{Projects}\n\n${blocks.join('\n\n')}`;
-}
-
 function buildAchievements(achievements?: string[]): string {
   if (!achievements || achievements.length === 0) return '';
 
@@ -223,30 +185,17 @@ function buildAchievements(achievements?: string[]): string {
 
 // ─── Main Assembler ───
 
-const DEFAULT_SECTION_ORDER = ['experience', 'skills', 'projects', 'education', 'achievements'];
-
 export function assembleLatex(data: ResumeData): string {
-  const sectionOrder = data.sectionOrder || DEFAULT_SECTION_ORDER;
-
-  const sectionBuilders: Record<string, () => string> = {
-    experience: () => buildExperience(data.experience),
-    skills: () => buildSkills(data.skills),
-    projects: () => buildProjects(data.projects),
-    education: () => buildEducation(data.education),
-    achievements: () => buildAchievements(data.achievements),
-  };
-
-  const sections = sectionOrder
-    .map((key) => sectionBuilders[key]?.() ?? '')
-    .filter((s) => s !== '');
-
   const parts = [
     buildPreamble(data),
     '',
     '\\begin{document}',
     '',
     buildHeader(data),
-    ...sections,
+    buildExperience(data.experience),
+    buildSkills(data.skills),
+    buildEducation(data.education),
+    buildAchievements(data.achievements),
     '',
     '\\end{document}',
   ];
