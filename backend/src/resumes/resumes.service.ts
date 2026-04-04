@@ -9,34 +9,59 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { execFile } from 'child_process';
 
-const DEFAULT_LATEX = `\\documentclass[11pt,a4paper]{article}
-\\usepackage[margin=0.75in]{geometry}
-\\usepackage{hyperref}
+const DEFAULT_LATEX = `\\documentclass[10pt]{article}
+\\usepackage[T1]{fontenc}
+\\usepackage[top=0.3in, bottom=0.3in, left=0.4in, right=0.4in]{geometry}
+\\usepackage[hidelinks]{hyperref}
+\\input{glyphtounicode}
+\\pdfgentounicode=1
+\\raggedright
+\\setlength{\\parskip}{0pt}
+\\setlength{\\parindent}{0pt}
+\\setlength{\\tabcolsep}{0in}
+\\setlength{\\topsep}{0pt}
+\\setlength{\\partopsep}{0pt}
+\\setlength{\\leftmargini}{0.15in}
+\\renewcommand{\\baselinestretch}{1.0}
+\\pagestyle{empty}
+
+\\newcommand{\\ressection}[1]{%
+  \\vspace{2pt}%
+  {\\large\\scshape\\raggedright #1}\\\\[-5pt]%
+  \\rule{\\textwidth}{0.4pt}\\vspace{-7pt}%
+}
 
 \\begin{document}
 
 \\begin{center}
-  {\\LARGE\\textbf{Your Name}}\\\\[4pt]
-  your.email@example.com $\\mid$ (123) 456-7890 $\\mid$ linkedin.com/in/yourname
+  {\\LARGE\\textbf{Your Name}}\\\\[2pt]
+  \\small \\href{mailto:you@email.com}{you@email.com} $\\mid$ (123) 456-7890 $\\mid$ \\href{https://linkedin.com/in/you}{linkedin.com/in/you} $\\mid$ \\href{https://github.com/you}{github.com/you}
 \\end{center}
+\\vspace{-4pt}
 
-\\section*{Summary}
-Your professional summary here.
+\\ressection{Experience}
 
-\\section*{Experience}
-\\textbf{Job Title} --- \\textbf{Company Name}\\\\
-\\textit{Start Date -- End Date} --- Location
+\\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}
+  \\textbf{Job Title} & Jan 2024 -- Present \\\\
+  \\textit{\\small Company Name} & \\textit{\\small City, Country} \\\\
+\\end{tabular*}
+\\vspace{-6pt}
 \\begin{itemize}
-  \\item Achievement or responsibility
+  \\setlength{\\itemsep}{2pt}\\setlength{\\parsep}{0pt}\\setlength{\\topsep}{0pt}
+  \\item \\small Achievement or responsibility with quantified impact
 \\end{itemize}
 
-\\section*{Skills}
-\\textbf{Languages:} JavaScript, TypeScript, Python\\\\
-\\textbf{Frameworks:} React, Node.js, NestJS
+\\ressection{Technical Skills}
+\\small
+\\textbf{Languages:} JavaScript, TypeScript, Python \\\\
+\\textbf{Frameworks:} React, Node.js, NestJS \\\\
+\\textbf{Tools:} Docker, Git, AWS
 
-\\section*{Education}
-\\textbf{Degree} --- \\textbf{University Name}\\\\
-\\textit{Year} --- Location
+\\ressection{Education}
+
+\\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}
+  \\textbf{Degree --- University Name} & 2019 -- 2023 \\\\
+\\end{tabular*}
 
 \\end{document}
 `;
