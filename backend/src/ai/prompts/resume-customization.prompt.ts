@@ -54,6 +54,7 @@ BULLET HANDLING — THE MOST IMPORTANT RULE
 ══════════════════════════════════════════════
 - Include ALL bullets from every role. Do NOT drop any. Count them — the output must have the same number of bullets per role as the input.
 - Copy each bullet VERBATIM. Do not reword, shorten, split, merge, or "improve" them. The candidate wrote them exactly as they want.
+- PRESERVE all **bold markers** (double asterisks) exactly as they appear in the profile. These are intentional formatting markers used by the rendering engine — do NOT strip, move, or add them.
 - The ONLY thing you do is REORDER bullets within each role: put the bullets most relevant to the job description first, and least relevant last.
 - Roles themselves stay in chronological order (most recent first). Do NOT reorder roles.
 
@@ -91,7 +92,7 @@ CONTENT RULES
 - NEVER add bullets that aren't in the profile.
 - Section order: Experience → Education → Achievements. Skills section only if provided.
 - Dates: "Mon YYYY" format. Use "Present" for current roles. Use "--" for date ranges.
-- Do NOT include LaTeX commands in text. Plain text only.
+- Do NOT include LaTeX commands in text. Plain text only — EXCEPT for **bold markers** (double asterisks) which must be preserved exactly as-is.
 - Do NOT use special characters like ~ or ^ — write them out if needed.
 - Use -- (double dash) for date ranges, not - or —.`;
 
@@ -123,7 +124,7 @@ Output rules:
 - ONLY return valid JSON — no markdown fences, no text outside the JSON object
 - Include ALL experience roles in chronological order (most recent first)
 - Include ALL bullets per role — just reorder by JD relevance
-- Copy bullets VERBATIM — do not reword
+- Copy bullets VERBATIM — do not reword, and preserve all **bold markers**
 - Plain text only — no LaTeX commands
 - Use -- for date ranges, "Mon YYYY" for dates`;
 
