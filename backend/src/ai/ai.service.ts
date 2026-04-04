@@ -5,6 +5,8 @@ import {
   RESUME_SYSTEM_PROMPT,
   buildCustomizationPrompt,
 } from './prompts/resume-customization.prompt.js';
+import { assembleLatex } from './prompts/resume-template.js';
+import type { ResumeData } from './prompts/resume-template.js';
 
 @Injectable()
 export class AiService {
@@ -71,13 +73,20 @@ export class AiService {
         .map((b: any) => b.text)
         .join('') || '';
 
-    const latexMatch = text.match(/```latex\s*([\s\S]*?)```/);
-    const latexSource = latexMatch ? latexMatch[1].trim() : '';
+    // Parse the JSON response
+    let parsed: { reasoning: string; resume: ResumeData };
+    try {
+      // Strip markdown code fences if the model wrapped it anyway
+      const cleaned = text.replace(/^```(?:json)?\s*/m, '').replace(/\s*```\s*$/m, '').trim();
+      parsed = JSON.parse(cleaned);
+    } catch {
+      throw new InternalServerErrorException(
+        `AI returned invalid JSON. Raw response: ${text.slice(0, 500)}`,
+      );
+    }
 
-    const reasoningMatch = text.match(
-      /(?:REASONING|reasoning)[:\s]*([\s\S]*?)(?=```|$)/,
-    );
-    const reasoning = reasoningMatch ? reasoningMatch[1].trim() : '';
+    const latexSource = assembleLatex(parsed.resume);
+    const reasoning = parsed.reasoning || '';
 
     return { latexSource, reasoning };
   }
