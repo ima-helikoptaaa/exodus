@@ -54,6 +54,7 @@ function buildPreamble(data: ResumeData): string {
   return `\\documentclass[10pt, letterpaper]{article}
 \\usepackage[T1]{fontenc}
 \\usepackage[utf8]{inputenc}
+\\usepackage{lmodern}
 \\usepackage{microtype}
 \\usepackage[top=0.3in, bottom=0.3in, left=0.4in, right=0.4in]{geometry}
 \\usepackage[hidelinks]{hyperref}

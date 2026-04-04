@@ -15,7 +15,8 @@ FROM node:20-slim AS runner
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-      texlive-latex-base texlive-fonts-recommended texlive-latex-extra wget && \
+      texlive-latex-base texlive-fonts-recommended texlive-latex-extra \
+      lmodern wget && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
