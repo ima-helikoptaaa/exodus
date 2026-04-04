@@ -47,6 +47,14 @@ function escapeLatex(text: string): string {
     .replace(/\\textbackslash\{\}textasciicircum\{\}/g, '\\textasciicircum{}');
 }
 
+// ─── Markdown Bold → LaTeX ───
+// Converts **text** markers to \textbf{text} in already-escaped LaTeX strings.
+// Runs AFTER escapeLatex since ** contains no special LaTeX characters.
+
+function applyBold(text: string): string {
+  return text.replace(/\*\*(.+?)\*\*/g, '\\textbf{$1}');
+}
+
 // ─── Template Skeleton ───
 
 function buildPreamble(data: ResumeData): string {
@@ -140,7 +148,7 @@ function buildExperience(entries: ExperienceEntry[]): string {
     const endDate = escapeLatex(entry.endDate);
 
     const bullets = entry.bullets
-      .map((b) => `  \\item ${escapeLatex(b)}`)
+      .map((b) => `  \\item ${applyBold(escapeLatex(b))}`)
       .join('\n');
 
     const separator = i > 0 ? '\\rolesep\n' : '';
@@ -191,7 +199,7 @@ function buildAchievements(achievements?: string[]): string {
   if (!achievements || achievements.length === 0) return '';
 
   const items = achievements
-    .map((a) => `  \\item ${escapeLatex(a)}`)
+    .map((a) => `  \\item ${applyBold(escapeLatex(a))}`)
     .join('\n');
   return `\\ressection{Achievements}\n\n\\begin{itemize}\n${items}\n\\end{itemize}`;
 }
