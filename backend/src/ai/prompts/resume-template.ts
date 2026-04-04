@@ -64,7 +64,7 @@ function buildPreamble(data: ResumeData): string {
 \\usepackage[utf8]{inputenc}
 \\usepackage{lmodern}
 \\usepackage{microtype}
-\\usepackage[top=0.35in, bottom=0.35in, left=0.45in, right=0.45in]{geometry}
+\\usepackage[top=0.3in, bottom=0.3in, left=0.45in, right=0.45in]{geometry}
 \\usepackage[hidelinks]{hyperref}
 \\usepackage{enumitem}
 \\usepackage{xcolor}
@@ -92,7 +92,7 @@ function buildPreamble(data: ResumeData): string {
 
 % Section heading: small caps + horizontal rule
 \\newcommand{\\ressection}[1]{%
-  \\vspace{4pt}%
+  \\vspace{3pt}%
   {\\large\\scshape\\raggedright #1}\\\\[-5pt]%
   \\rule{\\textwidth}{0.4pt}\\vspace{1pt}%
 }
@@ -102,15 +102,15 @@ function buildPreamble(data: ResumeData): string {
   \\normalsize
   \\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}
     \\textbf{#1} & #3 \\\\
-    \\small\\textit{#2} & \\\\
+    \\textit{#2} & \\\\
   \\end{tabular*}\\vspace{1pt}%
 }
 
 % Thin rule separator between roles
 \\newcommand{\\rolesep}{%
-  \\vspace{4pt}%
+  \\vspace{3pt}%
   {\\color{gray!50}\\hrule height 0.3pt}%
-  \\vspace{4pt}%
+  \\vspace{3pt}%
 }`;
 }
 
