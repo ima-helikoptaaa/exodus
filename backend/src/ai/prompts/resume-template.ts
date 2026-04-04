@@ -102,7 +102,7 @@ function buildPreamble(data: ResumeData): string {
   \\normalsize
   \\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}
     \\textbf{#1} & #3 \\\\
-    \\textit{#2} & \\\\
+    \\small #2 & \\\\
   \\end{tabular*}\\vspace{1pt}%
 }
 
