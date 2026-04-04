@@ -59,6 +59,7 @@ function buildPreamble(data: ResumeData): string {
 \\usepackage[top=0.35in, bottom=0.35in, left=0.45in, right=0.45in]{geometry}
 \\usepackage[hidelinks]{hyperref}
 \\usepackage{enumitem}
+\\usepackage{xcolor}
 \\input{glyphtounicode}
 \\pdfgentounicode=1
 
@@ -78,21 +79,30 @@ function buildPreamble(data: ResumeData): string {
 \\setlength{\\partopsep}{0pt}
 \\setlength{\\leftmargini}{0.15in}
 \\renewcommand{\\baselinestretch}{1.0}
-\\setlist[itemize]{itemsep=1.5pt, parsep=0pt, topsep=2pt, partopsep=0pt}
+\\setlist[itemize]{itemsep=0.5pt, parsep=0pt, topsep=1pt, partopsep=0pt}
 \\pagestyle{empty}
 
 % Section heading: small caps + horizontal rule
 \\newcommand{\\ressection}[1]{%
-  \\vspace{6pt}%
+  \\vspace{4pt}%
   {\\large\\scshape\\raggedright #1}\\\\[-5pt]%
-  \\rule{\\textwidth}{0.4pt}\\vspace{2pt}%
+  \\rule{\\textwidth}{0.4pt}\\vspace{1pt}%
 }
 
-% One-line role header: Title | Company .......... Dates
+% Two-line role header: Title .......... Dates / Company
 \\newcommand{\\roleheader}[3]{%
+  \\normalsize
   \\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}
-    \\textbf{#1} \\textbar\\ \\textit{#2} & #3 \\\\
+    \\textbf{#1} & #3 \\\\
+    \\small\\textit{#2} & \\\\
   \\end{tabular*}\\vspace{1pt}%
+}
+
+% Thin rule separator between roles
+\\newcommand{\\rolesep}{%
+  \\vspace{4pt}%
+  {\\color{gray!50}\\hrule height 0.3pt}%
+  \\vspace{4pt}%
 }`;
 }
 
@@ -115,7 +125,7 @@ function buildHeader(data: ResumeData): string {
   });
 
   return `\\begin{center}
-  {\\LARGE\\textbf{${name}}}\\\\[3pt]
+  {\\LARGE\\textbf{${name}}}\\\\[2pt]
   ${contactParts.join('\n  $\\mid$ ')}
 \\end{center}`;
 }
@@ -133,9 +143,9 @@ function buildExperience(entries: ExperienceEntry[]): string {
       .map((b) => `  \\item ${escapeLatex(b)}`)
       .join('\n');
 
-    const spacing = i > 0 ? '\\vspace{5pt}\n' : '';
+    const separator = i > 0 ? '\\rolesep\n' : '';
 
-    return `${spacing}\\roleheader{${title}}{${company}}{${startDate} -- ${endDate}}
+    return `${separator}\\roleheader{${title}}{${company}}{${startDate} -- ${endDate}}
 \\begin{itemize}
 ${bullets}
 \\end{itemize}`;

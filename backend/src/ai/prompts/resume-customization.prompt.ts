@@ -8,7 +8,7 @@ You receive a candidate's full professional profile and a job description. You m
 2. Include EVERY bullet point from each role. Do NOT drop, merge, or summarize any bullets.
 3. Do NOT reword bullets. Copy them exactly as provided in the profile — verbatim, word-for-word.
 4. REORDER bullets within each role so the most JD-relevant bullets appear first.
-5. Tailor the Skills section to prioritize JD-relevant skills.
+5. If a Skills section is provided in the profile, tailor it to prioritize JD-relevant skills. If no skills section is provided, return an empty skills array.
 
 OUTPUT FORMAT:
 Return ONLY valid JSON matching this exact schema (no markdown, no code fences, no extra text):
@@ -33,16 +33,16 @@ Return ONLY valid JSON matching this exact schema (no markdown, no code fences, 
       }
     ],
     "skills": [
-      { "category": "Languages", "items": "Python, TypeScript, Go, Java" },
-      { "category": "Frameworks", "items": "React, FastAPI, NestJS, Spring Boot" }
+      { "category": "Languages & Frameworks", "items": "Python, TypeScript, Go, React, FastAPI, NestJS" },
+      { "category": "Databases & Infrastructure", "items": "PostgreSQL, Redis, AWS, Docker, Kubernetes" }
     ],
     "education": [
       {
-        "degree": "Bachelor of Technology in Information Technology",
+        "degree": "Bachelor of Technology - Information Technology",
         "institution": "University Name",
         "location": "City, Country",
         "dates": "2019 -- 2023",
-        "details": "GPA: 3.8/4.0 | Dean's List | Relevant: Distributed Systems, ML, Databases"
+        "details": "GPA: 3.8 | Courses: Distributed Systems, ML, Databases"
       }
     ],
     "achievements": ["Achievement 1", "Achievement 2"]
@@ -66,21 +66,21 @@ ATS systems rank candidates by keyword match. Optimize through bullet ordering a
 
 2. BULLET REORDERING: Within each role, bullets that mention JD keywords should appear first. This ensures ATS and recruiters see the most relevant content immediately.
 
-3. SKILLS SECTION: This is where you have the most freedom to optimize for ATS.
+3. SKILLS SECTION (only if the profile includes skills):
    - Mirror exact JD phrasing: if the JD says "React.js", write "React.js" not just "React".
    - Include both acronyms AND spelled-out forms where natural: "Amazon Web Services (AWS)", "CI/CD".
    - Prioritize JD-mentioned technologies, then include remaining skills from the profile.
    - Group logically into 3-4 categories. Combine related areas (e.g. "Languages & Frameworks", "Databases & Infrastructure", "AI/ML", "Observability & Tools").
    - Do NOT include soft skills (Communication, Teamwork) — ATS ignores them.
+   - If the profile has no skills section, return "skills": [].
 
-4. STANDARD SECTION HEADINGS: Use exactly: "Experience", "Technical Skills", "Education", "Achievements".
+4. STANDARD SECTION HEADINGS: Use exactly: "Experience", "Education", "Achievements". Use "Technical Skills" only if skills are present.
 
 ══════════════════════════════════════════════
 ONE-PAGE FIT
 ══════════════════════════════════════════════
-The template uses 10pt font, small text for bullets, and tight margins (0.3in top/bottom, 0.4in sides). Long bullets will naturally wrap within the layout — this is fine. The candidate's content should generally fit in one page given this formatting. If it looks tight:
+The template uses 10pt font, small text for content, and tight margins (0.35in top/bottom, 0.45in sides). Long bullets will naturally wrap within the layout — this is fine. The candidate's content should generally fit in one page given this formatting. If it looks tight:
 - Keep all experience bullets (non-negotiable).
-- Trim skills categories to 4-5 max.
 - Keep education concise (1-2 entries, short details line).
 - Achievements are optional — include only if space allows.
 
@@ -89,7 +89,7 @@ CONTENT RULES
 ══════════════════════════════════════════════
 - NEVER fabricate experience, skills, achievements, or metrics.
 - NEVER add bullets that aren't in the profile.
-- Section order: Experience → Skills → Education → Achievements.
+- Section order: Experience → Education → Achievements. Skills section only if provided.
 - Dates: "Mon YYYY" format. Use "Present" for current roles. Use "--" for date ranges.
 - Do NOT include LaTeX commands in text. Plain text only.
 - Do NOT use special characters like ~ or ^ — write them out if needed.
@@ -116,7 +116,7 @@ export function buildCustomizationPrompt(params: {
 
 1. EXTRACT: List every hard skill, technology, tool, and methodology from the JD.
 2. For each experience role, REORDER the bullets so JD-relevant ones come first. Include ALL bullets — do not drop any.
-3. Tailor the Skills section to prioritize JD keywords.
+3. If a Skills section exists in the profile, tailor it to prioritize JD keywords. If not, return an empty skills array.
 4. VERIFY: Count bullets per role — they must match the input exactly. No bullets dropped, no bullets added, no rewording.
 
 Output rules:
