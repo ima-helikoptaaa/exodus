@@ -74,6 +74,8 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           size="sm"
           className="w-full justify-start gap-2.5 text-muted-foreground"
           onClick={toggle}
+          aria-pressed={dark}
+          aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
         >
           {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           {dark ? 'Light mode' : 'Dark mode'}

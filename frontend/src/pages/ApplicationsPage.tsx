@@ -136,8 +136,15 @@ export default function ApplicationsPage() {
               sorted.map((app) => (
                 <TableRow
                   key={app.id}
-                  className="cursor-pointer hover:bg-accent/50 transition-colors"
+                  className="cursor-pointer hover:bg-accent/50 transition-colors focus-visible:bg-accent/50 focus-visible:outline-none"
+                  tabIndex={0}
                   onClick={() => navigate(`/applications/${app.id}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      navigate(`/applications/${app.id}`);
+                    }
+                  }}
                 >
                   <TableCell className="font-medium">{app.company.name}</TableCell>
                   <TableCell>{app.role}</TableCell>

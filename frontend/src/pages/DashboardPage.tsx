@@ -238,7 +238,7 @@ export default function DashboardPage() {
                   <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all duration-500"
-                      style={{ width: `${pct}%`, backgroundColor: 'var(--foreground)', opacity: 0.7 }}
+                      style={{ width: `${pct}%`, backgroundColor: 'var(--primary)', opacity: 0.85 }}
                     />
                   </div>
                   <span className="text-sm text-muted-foreground w-6 text-right">{count}</span>
@@ -260,7 +260,7 @@ export default function DashboardPage() {
                 />
                 <YAxis allowDecimals={false} fontSize={11} width={24} />
                 <Tooltip content={<ChartTooltip />} cursor={{ fill: 'var(--accent)', opacity: 0.5 }} />
-                <Bar dataKey="count" fill="var(--foreground)" opacity={0.8} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (

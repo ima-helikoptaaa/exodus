@@ -1,0 +1,398 @@
+# =============================================================================
+# Exodus Job Scout — Target Companies & Job Boards
+# The scout checks these in order: Greenhouse API first (fast, structured),
+# then career page URLs via WebFetch, then broad job board searches.
+# =============================================================================
+
+# Title keyword filters — applied BEFORE evaluation to skip obviously wrong roles
+title_filters:
+  # At least one positive keyword must appear in the job title
+  positive:
+    - Software Engineer
+    - Backend Engineer
+    - Platform Engineer
+    - Product Engineer
+    - ML Engineer
+    - Machine Learning Engineer
+    - AI Engineer
+    - Data Engineer
+    - Infrastructure Engineer
+    - Full Stack Engineer
+    - Fullstack Engineer
+    - Full-Stack Engineer
+    - Founding Engineer
+    - Site Reliability Engineer
+    - SRE
+    - DevOps Engineer
+    - Cloud Engineer
+    - Systems Engineer
+  # Instant reject if any negative keyword appears
+  negative:
+    - Staff
+    - Principal
+    - Director
+    - VP
+    - Head of
+    - Manager
+    - Lead
+    - Architect  # usually 8+ years
+    - Distinguished
+    - Fellow
+    - Intern
+    - Trainee
+    - Frontend
+    - Front-End
+    - Front End
+    - Mobile
+    - iOS
+    - Android
+    - QA
+    - SDET
+    - Test Engineer
+    - DevRel
+    - Developer Advocate
+    - Technical Writer
+    - Solutions Engineer
+    - Sales Engineer
+    - Support Engineer
+    - Customer Success
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TIER 1: High-paying India-based companies (30+ LPA)
+# ─────────────────────────────────────────────────────────────────────────────
+companies:
+  # --- Dev Tools / SaaS ---
+  - name: Atlassian
+    careers_url: https://www.atlassian.com/company/careers/all-jobs
+    greenhouse_slug: atlassian
+    notes: "40-70 LPA, strong India presence (Bangalore)"
+
+  - name: Postman
+    careers_url: https://www.postman.com/company/careers/
+    greenhouse_slug: postman
+    notes: "35-60 LPA, HQ Bangalore"
+
+  - name: BrowserStack
+    careers_url: https://www.browserstack.com/careers
+    notes: "30-50 LPA, Mumbai HQ"
+
+  - name: Chargebee
+    careers_url: https://www.chargebee.com/careers/
+    greenhouse_slug: chargebee
+    notes: "30-45 LPA, Chennai"
+
+  - name: Hasura
+    careers_url: https://hasura.io/careers
+    ashby_slug: hasura
+    notes: "35-60 LPA, Bangalore, remote-friendly"
+
+  # --- Fintech India ---
+  - name: Razorpay
+    careers_url: https://razorpay.com/jobs/
+    notes: "30-45 LPA, Bangalore"
+
+  - name: Juspay
+    careers_url: https://juspay.in/careers
+    notes: "30-50 LPA, Bangalore"
+
+  - name: Groww
+    careers_url: https://groww.in/careers
+    notes: "30-45 LPA, Bangalore"
+
+  - name: CRED
+    careers_url: https://careers.cred.club/
+    notes: "30-50 LPA, Bangalore"
+
+  - name: PhonePe
+    careers_url: https://www.phonepe.com/careers/
+    notes: "30-50 LPA, Bangalore"
+
+  - name: Zerodha
+    careers_url: https://zerodha.com/careers/
+    notes: "Bangalore, engineering-heavy"
+
+  # --- Indian Unicorns ---
+  - name: Flipkart
+    careers_url: https://www.flipkartcareers.com/
+    notes: "35-60 LPA, Bangalore"
+
+  - name: Swiggy
+    careers_url: https://careers.swiggy.com/
+    notes: "30-50 LPA, Bangalore"
+
+  - name: Meesho
+    careers_url: https://meesho.io/careers
+    notes: "30-45 LPA, Bangalore"
+
+  # --- Data / Infra ---
+  - name: Snowflake
+    careers_url: https://careers.snowflake.com/us/en/search-results
+    greenhouse_slug: snowflakecomputing
+    notes: "50-90 LPA, India office"
+
+  - name: Databricks
+    careers_url: https://www.databricks.com/company/careers
+    greenhouse_slug: databricks
+    notes: "45-80 LPA, Bangalore"
+
+  - name: Confluent
+    careers_url: https://www.confluent.io/careers/
+    greenhouse_slug: confluent
+    notes: "40-70 LPA, Bangalore"
+
+  # --- Security / Infra ---
+  - name: CrowdStrike
+    careers_url: https://www.crowdstrike.com/careers/
+    notes: "30-55 LPA, India + remote"
+
+  - name: Elastic
+    careers_url: https://www.elastic.co/careers/
+    greenhouse_slug: elastic
+    notes: "30-50 LPA, distributed/remote"
+
+  - name: Palantir
+    careers_url: https://www.palantir.com/careers/
+    greenhouse_slug: palantir
+    notes: "35-60 LPA"
+
+  - name: Okta
+    careers_url: https://www.okta.com/company/careers/
+    greenhouse_slug: okta
+    notes: "25-45 LPA"
+
+  # --- Dev Infra / Databases ---
+  - name: Redis
+    careers_url: https://redis.io/careers/
+    greenhouse_slug: redislabs
+    notes: "25-45 LPA"
+
+  - name: MongoDB
+    careers_url: https://www.mongodb.com/company/careers
+    greenhouse_slug: mongodb
+    notes: "25-45 LPA, India office"
+
+  - name: HashiCorp
+    careers_url: https://www.hashicorp.com/careers
+    greenhouse_slug: hashicorp
+    notes: "25-45 LPA, remote-first"
+
+  # --- Design / Productivity ---
+  - name: Figma
+    careers_url: https://www.figma.com/careers/
+    greenhouse_slug: figma
+    notes: "30-50 LPA"
+
+  - name: Notion
+    careers_url: https://www.notion.so/careers
+    greenhouse_slug: notion
+    notes: "Remote-friendly, strong eng culture"
+
+  - name: Linear
+    careers_url: https://linear.app/careers
+    ashby_slug: linear
+    notes: "Remote-first, small team"
+
+  # --- Fintech Global ---
+  - name: Stripe
+    careers_url: https://stripe.com/jobs
+    notes: "35-60 LPA, India office (Bangalore)"
+
+  - name: Brex
+    careers_url: https://www.brex.com/careers
+    ashby_slug: brex
+    notes: "30-55 LPA, remote"
+
+  - name: Plaid
+    careers_url: https://plaid.com/careers/
+    greenhouse_slug: plaid
+    notes: "30-55 LPA"
+
+  - name: Coinbase
+    careers_url: https://www.coinbase.com/careers
+    ashby_slug: coinbase
+    notes: "30-55 LPA, remote-first"
+
+  # --- FAANG / Big Tech ---
+  - name: Google
+    careers_url: https://www.google.com/about/careers/applications/jobs/results/?location=India
+    notes: "India offices: Bangalore, Hyderabad, Gurgaon"
+
+  - name: Microsoft
+    careers_url: https://careers.microsoft.com/v2/global/en/search?l=en_us&lc=India
+    notes: "Huge India presence"
+
+  - name: Amazon
+    careers_url: https://www.amazon.jobs/en/locations/india
+    notes: "Massive India eng teams"
+
+  - name: Meta
+    careers_url: https://www.metacareers.com/jobs
+    notes: "India office, remote roles"
+
+  - name: Apple
+    careers_url: https://jobs.apple.com/en-us/search?location=india
+    notes: "India offices: Bangalore, Hyderabad"
+
+  # --- Mobility ---
+  - name: Uber
+    careers_url: https://www.uber.com/us/en/careers/
+    greenhouse_slug: uber
+    notes: "India: Bangalore, Hyderabad"
+
+  - name: Grab
+    careers_url: https://grab.careers/
+    greenhouse_slug: grab
+    notes: "Bangalore office"
+
+  # --- Cloud / Observability ---
+  - name: Datadog
+    careers_url: https://careers.datadoghq.com/
+    greenhouse_slug: datadog
+    notes: "Remote-friendly"
+
+  - name: Grafana Labs
+    careers_url: https://grafana.com/about/careers/open-positions/
+    ashby_slug: grafana-labs
+    notes: "Remote-first, global, India-friendly"
+
+  - name: GitLab
+    careers_url: https://about.gitlab.com/jobs/
+    greenhouse_slug: gitlab
+    notes: "All-remote company"
+
+  - name: Cloudflare
+    careers_url: https://www.cloudflare.com/careers/
+    greenhouse_slug: cloudflare
+    notes: "India office"
+
+  # --- Commerce / Web Infra ---
+  - name: Shopify
+    careers_url: https://www.shopify.com/careers
+    greenhouse_slug: shopify
+    notes: "Remote-first"
+
+  - name: Vercel
+    careers_url: https://vercel.com/careers
+    greenhouse_slug: vercel
+    notes: "Remote-first"
+
+  - name: Supabase
+    careers_url: https://supabase.com/careers
+    ashby_slug: supabase
+    notes: "Remote-first, small team"
+
+  # --- HR / Remote Work ---
+  - name: Rippling
+    careers_url: https://www.rippling.com/careers
+    ashby_slug: rippling
+    notes: "Bangalore, fast-growing"
+
+  - name: Deel
+    careers_url: https://www.deel.com/careers
+    ashby_slug: deel
+    notes: "Remote-first"
+
+  # --- Travel / Enterprise ---
+  - name: Airbnb
+    careers_url: https://careers.airbnb.com/
+    greenhouse_slug: airbnb
+    notes: "30-50 LPA India roles"
+
+  - name: Workday
+    careers_url: https://www.workday.com/en-us/company/careers.html
+    notes: "20-35 LPA, India offices"
+
+  - name: ServiceNow
+    careers_url: https://www.servicenow.com/careers.html
+    notes: "20-35 LPA, Hyderabad"
+
+  - name: Skyscanner
+    careers_url: https://www.skyscanner.net/jobs/
+    notes: "20-35 LPA"
+
+  # --- Finance / Quant ---
+  - name: Tower Research Capital
+    careers_url: https://www.tower-research.com/careers
+    notes: "80 LPA - 2 Cr, Gurgaon"
+
+  - name: DE Shaw
+    careers_url: https://www.deshaw.com/careers
+    notes: "50 LPA - 1 Cr, Hyderabad"
+
+  - name: Goldman Sachs
+    careers_url: https://www.goldmansachs.com/careers/
+    notes: "30-45 LPA, Bangalore"
+
+  # --- AI / ML companies ---
+  - name: Anthropic
+    careers_url: https://www.anthropic.com/careers
+    greenhouse_slug: anthropic
+    notes: "Remote, top AI lab"
+
+  - name: OpenAI
+    careers_url: https://openai.com/careers/
+    greenhouse_slug: openai
+    notes: "Remote roles available"
+
+  - name: Cohere
+    careers_url: https://cohere.com/careers
+    greenhouse_slug: cohere
+    notes: "Remote-first AI"
+
+  - name: Mistral AI
+    careers_url: https://mistral.ai/careers/
+    notes: "Paris-based, some remote"
+
+  - name: Hugging Face
+    careers_url: https://huggingface.co/jobs
+    greenhouse_slug: huggingface
+    notes: "Remote-first"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Job boards to search AFTER company career pages
+# ─────────────────────────────────────────────────────────────────────────────
+job_boards:
+  - name: Wellfound (AngelList)
+    search_url: https://wellfound.com/jobs
+    queries:
+      - "site:wellfound.com software engineer India"
+      - "site:wellfound.com backend engineer India"
+      - "site:wellfound.com ML engineer India remote"
+
+  - name: Hacker News Who's Hiring
+    queries:
+      - "site:news.ycombinator.com who is hiring CURRENTMONTH CURRENTYEAR India remote"
+
+  - name: levels.fyi
+    search_url: https://www.levels.fyi/jobs
+    queries:
+      - "site:levels.fyi software engineer India"
+
+  - name: Instahyre
+    search_url: https://www.instahyre.com
+    queries:
+      - "site:instahyre.com software engineer"
+      - "site:instahyre.com backend engineer"
+
+  - name: Naukri
+    search_url: https://www.naukri.com
+    queries:
+      - "site:naukri.com software engineer 0-3 years bangalore"
+      - "site:naukri.com backend engineer 0-3 years"
+
+  - name: LinkedIn India
+    queries:
+      - "site:linkedin.com/jobs software engineer India 2024 2025"
+      - "site:linkedin.com/jobs backend engineer Bangalore"
+
+  - name: RemoteOK
+    search_url: https://remoteok.com
+    queries:
+      - "site:remoteok.com backend engineer India"
+      - "site:remoteok.com software engineer India"
+
+  - name: Cutshort
+    search_url: https://cutshort.io
+    queries:
+      - "site:cutshort.io software engineer"
+      - "site:cutshort.io backend engineer"

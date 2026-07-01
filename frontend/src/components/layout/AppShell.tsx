@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,6 @@ import { Menu } from 'lucide-react';
 
 export default function AppShell() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const location = useLocation();
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -30,7 +29,7 @@ export default function AppShell() {
         </SheetContent>
       </Sheet>
 
-      <main className="flex-1 overflow-auto md:pt-0 pt-12" key={location.pathname}>
+      <main className="flex-1 overflow-auto md:pt-0 pt-12">
         <Outlet />
       </main>
     </div>

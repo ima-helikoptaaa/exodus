@@ -34,11 +34,19 @@ export default function KanbanCard({ app, isOverlay }: Props) {
       style={isOverlay ? undefined : style}
       {...(isOverlay ? {} : attributes)}
       {...(isOverlay ? {} : listeners)}
-      className="p-3 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow"
+      className="p-3 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       role="button"
+      tabIndex={isOverlay ? undefined : 0}
       aria-label={`${app.company.name} - ${app.role}`}
       onClick={() => {
         if (!isDragging) {
+          navigate(`/applications/${app.id}`);
+        }
+      }}
+      onKeyDown={(e) => {
+        if (isOverlay) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
           navigate(`/applications/${app.id}`);
         }
       }}

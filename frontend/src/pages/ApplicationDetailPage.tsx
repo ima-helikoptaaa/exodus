@@ -89,13 +89,14 @@ export default function ApplicationDetailPage() {
           <div className="flex items-center gap-2 shrink-0">
             <ApplicationForm
               application={app}
-              trigger={<Button size="icon" variant="outline"><Pencil className="h-4 w-4" /></Button>}
+              trigger={<Button size="icon" variant="outline" aria-label="Edit application"><Pencil className="h-4 w-4" /></Button>}
             />
             <Button
               size="icon"
               variant="outline"
-              className="text-destructive hover:bg-destructive hover:text-white transition-colors"
+              className="text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
               onClick={() => setDeleteOpen(true)}
+              aria-label="Delete application"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
