@@ -24,7 +24,7 @@ export default function MasterProfilePage() {
       <div className="p-6">
         <div className="animate-pulse space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 bg-muted rounded-lg" />
+            <div key={i} className="h-32 bg-muted/30 rounded-xl" />
           ))}
         </div>
       </div>
@@ -36,7 +36,7 @@ export default function MasterProfilePage() {
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-4">
       <div>
-        <h1 className="text-2xl font-bold">Master Profile</h1>
+        <h1 className="text-2xl font-heading font-bold tracking-tight">Master Profile</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Store all your professional details here. This data is used to generate tailored resumes.
         </p>

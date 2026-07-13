@@ -95,15 +95,15 @@ export default function ResumeEditorPage() {
   return (
     <div className="flex flex-col h-full">
       {/* Toolbar */}
-      <div className="flex items-center gap-2 p-2 border-b bg-card shrink-0">
+      <div className="flex items-center gap-2 p-2.5 border-b border-border/50 glass shrink-0">
         <Button size="sm" variant="ghost" onClick={() => navigate('/resumes')}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h2 className="font-semibold truncate">{resume.name}</h2>
+        <h2 className="font-heading font-semibold truncate">{resume.name}</h2>
         {resume.currentVersion && (
-          <span className="text-xs text-muted-foreground">v{resume.currentVersion.versionNumber}</span>
+          <span className="text-xs text-muted-foreground font-mono">v{resume.currentVersion.versionNumber}</span>
         )}
-        {dirty && <span className="text-xs text-amber-500 font-medium">unsaved</span>}
+        {dirty && <span className="text-xs text-accent-foreground font-medium font-mono">unsaved</span>}
         <div className="ml-auto flex items-center gap-2">
           <CustomizeDialog resumeId={resume.id} onApply={handleCustomizeApply} />
           <Button
@@ -151,7 +151,7 @@ export default function ResumeEditorPage() {
       <div className="flex-1 flex min-h-0">
         {/* Desktop split pane */}
         <div className="hidden md:flex flex-1 min-h-0">
-          <PanelGroup direction="horizontal">
+          <PanelGroup orientation="horizontal">
             <Panel defaultSize={50} minSize={30}>
               <LatexEditor value={latex} onChange={handleChange} />
             </Panel>

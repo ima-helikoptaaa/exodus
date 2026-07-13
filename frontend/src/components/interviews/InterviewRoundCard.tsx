@@ -24,7 +24,7 @@ export default function InterviewRoundCard({ round, applicationId }: { round: In
   const [reflection, setReflection] = useState(round.reflection ?? '');
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [reflectionSaved, setReflectionSaved] = useState(false);
-  const savedTimer = useRef<ReturnType<typeof setTimeout>>();
+  const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const updateRound = useUpdateInterviewRound();
   const deleteRound = useDeleteInterviewRound();
 

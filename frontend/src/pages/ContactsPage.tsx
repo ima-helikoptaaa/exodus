@@ -20,15 +20,18 @@ export default function ContactsPage() {
     : contacts;
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-4">
-      <h1 className="text-xl font-semibold">All Contacts</h1>
-      <div className="relative">
+    <div className="p-6 max-w-3xl mx-auto space-y-5">
+      <div>
+        <h1 className="text-2xl font-heading font-bold tracking-tight">All Contacts</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">{contacts.length} total</p>
+      </div>
+      <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search contacts..."
-          className="pl-9 max-w-sm"
+          className="pl-9"
         />
       </div>
       {isLoading ? (
@@ -37,9 +40,9 @@ export default function ContactsPage() {
         </div>
       ) : isError ? (
         <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-          <AlertTriangle className="h-10 w-10 mb-3 opacity-40" />
+          <AlertTriangle className="h-10 w-10 mb-3 opacity-20" />
           <p className="text-sm font-medium">Failed to load contacts</p>
-          <p className="text-xs mt-1">Please try refreshing the page</p>
+          <p className="text-xs mt-1 text-muted-foreground/60">Please try refreshing the page</p>
         </div>
       ) : (
         <ContactList contacts={filtered} showAddButton />

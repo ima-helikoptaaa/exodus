@@ -242,17 +242,31 @@ export const INTERVIEW_TYPE_LABELS: Record<InterviewType, string> = {
 };
 
 export const STAGE_COLORS: Record<PipelineStage, string> = {
-  WISHLIST: 'bg-slate-100 text-slate-700 dark:bg-slate-800/50 dark:text-slate-300',
-  APPLIED: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
-  INTRODUCTORY_CALL: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300',
-  ROUND_1: 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
-  ROUND_2: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
-  ROUND_3: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300',
-  ROUND_4: 'bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900/40 dark:text-fuchsia-300',
-  ROUND_5: 'bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300',
-  OFFER: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
-  REJECTED: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
-  WITHDRAWN: 'bg-gray-100 text-gray-500 dark:bg-gray-800/50 dark:text-gray-400',
+  WISHLIST: 'bg-slate-100 text-slate-600 dark:bg-slate-500/10 dark:text-slate-400',
+  APPLIED: 'bg-teal-100 text-teal-700 dark:bg-teal-500/10 dark:text-teal-400',
+  INTRODUCTORY_CALL: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-400',
+  ROUND_1: 'bg-sky-100 text-sky-700 dark:bg-sky-500/10 dark:text-sky-400',
+  ROUND_2: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400',
+  ROUND_3: 'bg-violet-100 text-violet-700 dark:bg-violet-500/10 dark:text-violet-400',
+  ROUND_4: 'bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-500/10 dark:text-fuchsia-400',
+  ROUND_5: 'bg-pink-100 text-pink-700 dark:bg-pink-500/10 dark:text-pink-400',
+  OFFER: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
+  REJECTED: 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',
+  WITHDRAWN: 'bg-gray-100 text-gray-500 dark:bg-gray-500/10 dark:text-gray-500',
+};
+
+export const STAGE_DOT_COLORS: Record<PipelineStage, string> = {
+  WISHLIST: 'bg-slate-400',
+  APPLIED: 'bg-teal-400',
+  INTRODUCTORY_CALL: 'bg-cyan-400',
+  ROUND_1: 'bg-sky-400',
+  ROUND_2: 'bg-indigo-400',
+  ROUND_3: 'bg-violet-400',
+  ROUND_4: 'bg-fuchsia-400',
+  ROUND_5: 'bg-pink-400',
+  OFFER: 'bg-emerald-400',
+  REJECTED: 'bg-red-400',
+  WITHDRAWN: 'bg-gray-500',
 };
 
 // Scout types

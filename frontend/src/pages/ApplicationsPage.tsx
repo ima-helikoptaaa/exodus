@@ -6,8 +6,7 @@ import ApplicationForm from '@/components/applications/ApplicationForm';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { STAGE_LABELS, STAGE_COLORS, STAGE_ORDER } from '@/types';
-import type { Application } from '@/types';
+import { STAGE_LABELS, STAGE_DOT_COLORS, STAGE_ORDER } from '@/types';
 import { format } from 'date-fns';
 import { Search, Briefcase, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
@@ -57,10 +56,10 @@ export default function ApplicationsPage() {
   }, [applications, sortKey, sortDir]);
 
   function SortIcon({ col }: { col: SortKey }) {
-    if (sortKey !== col) return <ArrowUpDown className="h-3 w-3 ml-1 opacity-40" />;
+    if (sortKey !== col) return <ArrowUpDown className="h-3 w-3 ml-1 opacity-30" />;
     return sortDir === 'asc'
-      ? <ArrowUp className="h-3 w-3 ml-1" />
-      : <ArrowDown className="h-3 w-3 ml-1" />;
+      ? <ArrowUp className="h-3 w-3 ml-1 text-primary" />
+      : <ArrowDown className="h-3 w-3 ml-1 text-primary" />;
   }
 
   function SortableHead({ col, children, className }: { col: SortKey; children: React.ReactNode; className?: string }) {
@@ -78,26 +77,29 @@ export default function ApplicationsPage() {
   }
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-6 space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Applications</h1>
+        <div>
+          <h1 className="text-2xl font-heading font-bold tracking-tight">Applications</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{applications.length} total</p>
+        </div>
         <ApplicationForm />
       </div>
 
-      <div className="relative">
+      <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search company or role..."
-          className="pl-9 max-w-sm"
+          className="pl-9"
         />
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
+      <div className="rounded-xl border border-border/50 overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-muted/20 hover:bg-muted/20">
               <SortableHead col="company">Company</SortableHead>
               <SortableHead col="role">Role</SortableHead>
               <SortableHead col="stage">Stage</SortableHead>
@@ -113,7 +115,7 @@ export default function ApplicationsPage() {
                 <TableRow key={i}>
                   {[...Array(7)].map((_, j) => (
                     <TableCell key={j} className={j >= 3 && j < 5 ? 'hidden md:table-cell' : j >= 5 ? 'hidden lg:table-cell' : ''}>
-                      <div className="h-4 bg-muted animate-pulse rounded w-20" />
+                      <div className="h-4 bg-muted/50 animate-pulse rounded w-20" />
                     </TableCell>
                   ))}
                 </TableRow>
@@ -122,11 +124,11 @@ export default function ApplicationsPage() {
               <TableRow>
                 <TableCell colSpan={7} className="h-40">
                   <div className="flex flex-col items-center justify-center text-muted-foreground">
-                    <Briefcase className="h-10 w-10 mb-3 opacity-40" />
+                    <Briefcase className="h-12 w-12 mb-3 opacity-20" />
                     <p className="text-sm font-medium">
                       {search ? 'No matching applications' : 'No applications yet'}
                     </p>
-                    <p className="text-xs mt-1">
+                    <p className="text-xs mt-1 text-muted-foreground/60">
                       {search ? 'Try a different search term' : 'Add one to get started'}
                     </p>
                   </div>
@@ -136,7 +138,7 @@ export default function ApplicationsPage() {
               sorted.map((app) => (
                 <TableRow
                   key={app.id}
-                  className="cursor-pointer hover:bg-accent/50 transition-colors focus-visible:bg-accent/50 focus-visible:outline-none"
+                  className="cursor-pointer hover:bg-primary/5 transition-all focus-visible:bg-primary/5 focus-visible:outline-none group"
                   tabIndex={0}
                   onClick={() => navigate(`/applications/${app.id}`)}
                   onKeyDown={(e) => {
@@ -146,31 +148,32 @@ export default function ApplicationsPage() {
                     }
                   }}
                 >
-                  <TableCell className="font-medium">{app.company.name}</TableCell>
-                  <TableCell>{app.role}</TableCell>
+                  <TableCell className="font-medium font-heading">{app.company.name}</TableCell>
+                  <TableCell className="text-muted-foreground">{app.role}</TableCell>
                   <TableCell>
-                    <Badge variant="secondary" className={`text-xs ${STAGE_COLORS[app.stage]}`}>
-                      {STAGE_LABELS[app.stage]}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <div className={`h-2 w-2 rounded-full ${STAGE_DOT_COLORS[app.stage]}`} />
+                      <span className="text-xs">{STAGE_LABELS[app.stage]}</span>
+                    </div>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground hidden md:table-cell">
                     {app.isRemote ? 'Remote' : app.location ?? '-'}
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground hidden lg:table-cell">
+                  <TableCell className="text-sm text-muted-foreground hidden lg:table-cell font-mono">
                     {app.salaryMin && app.salaryMax
                       ? `${app.salaryMin / 1000}k-${app.salaryMax / 1000}k`
                       : '-'}
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground hidden md:table-cell">
+                  <TableCell className="text-sm text-muted-foreground hidden md:table-cell font-mono">
                     {app.appliedDate ? format(new Date(app.appliedDate), 'MMM d') : '-'}
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
                     <div className="flex gap-1">
                       {app.tags.slice(0, 2).map(({ tag }) => (
-                        <Badge key={tag.id} variant="secondary" className="text-[10px]">{tag.name}</Badge>
+                        <Badge key={tag.id} variant="secondary" className="text-[10px] font-mono">{tag.name}</Badge>
                       ))}
                       {app.tags.length > 2 && (
-                        <Badge variant="secondary" className="text-[10px]">+{app.tags.length - 2}</Badge>
+                        <Badge variant="secondary" className="text-[10px] font-mono">+{app.tags.length - 2}</Badge>
                       )}
                     </div>
                   </TableCell>

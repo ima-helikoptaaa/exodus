@@ -19,7 +19,7 @@ export default function ResumesListPage() {
       <div className="p-6">
         <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-36 bg-muted rounded-lg" />
+            <div key={i} className="h-36 bg-muted/30 rounded-xl" />
           ))}
         </div>
       </div>
@@ -27,10 +27,10 @@ export default function ResumesListPage() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-4">
+    <div className="p-6 max-w-6xl mx-auto space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Resumes</h1>
+          <h1 className="text-2xl font-heading font-bold tracking-tight">Resumes</h1>
           <p className="text-sm text-muted-foreground mt-1">Manage your resume versions and templates.</p>
         </div>
         <ResumeForm onDone={(r) => navigate(`/resumes/${r.id}`)} />
@@ -48,8 +48,8 @@ export default function ResumesListPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 text-muted-foreground">
-          <p>No resumes yet. Create your first one to get started.</p>
+        <div className="text-center py-16 text-muted-foreground">
+          <p className="text-sm">No resumes yet. Create your first one to get started.</p>
         </div>
       )}
 

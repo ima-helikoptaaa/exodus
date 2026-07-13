@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { FileText, Link2, Unlink, ExternalLink, Sparkles } from 'lucide-react';
+import { FileText, Link2, Unlink, ExternalLink } from 'lucide-react';
 import { format } from 'date-fns';
 import CustomizeDialog from './CustomizeDialog';
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Telescope, Loader2, CheckCircle2, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Telescope, Loader2, CheckCircle2, ChevronDown, ChevronUp, Sparkles, Zap, Eye } from 'lucide-react';
 import KanbanBoard from '@/components/kanban/KanbanBoard';
 import ApplicationForm from '@/components/applications/ApplicationForm';
 import {
@@ -25,14 +25,14 @@ export default function PipelinePage() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between px-6 pt-6 pb-2">
-        <div className="flex items-center gap-3">
-          <h1 className="text-xl font-semibold">Pipeline</h1>
+      <div className="flex items-center justify-between px-6 pt-6 pb-3">
+        <div>
+          <h1 className="text-2xl font-heading font-bold tracking-tight">Pipeline</h1>
           {lastRun && (
-            <span className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-1 font-mono">
               Last scout: {formatDistanceToNow(new Date(lastRun.startedAt), { addSuffix: true })}
               {lastRun.jobsAdded ? ` · ${lastRun.jobsAdded} added` : ''}
-            </span>
+            </p>
           )}
         </div>
         <div className="flex items-center gap-2 relative">
@@ -42,48 +42,58 @@ export default function PipelinePage() {
               size="sm"
               disabled={isScouting}
               onClick={() => setShowScoutMenu((s) => !s)}
+              className="gap-2"
             >
               {isScouting ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <Telescope className="h-4 w-4 mr-1.5" />
+                <Telescope className="h-4 w-4" />
               )}
               Run Scout
             </Button>
             {showScoutMenu && !isScouting && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setShowScoutMenu(false)} />
-                <div className="absolute right-0 top-full mt-1 z-20 w-64 rounded-md border bg-popover p-1 shadow-md">
+                <div className="absolute right-0 top-full mt-2 z-20 w-72 rounded-xl border border-border glass p-1.5 shadow-2xl animate-in-up">
                   <button
-                    className="w-full text-left px-3 py-2 text-sm rounded-sm hover:bg-accent transition-colors"
+                    className="w-full text-left px-3 py-2.5 text-sm rounded-lg hover:bg-primary/10 transition-all group flex items-start gap-3"
                     onClick={() => {
                       setShowScoutMenu(false);
                       runScout.mutate({ useLlm: true });
                     }}
                   >
-                    <div className="font-medium">Run with AI scoring</div>
-                    <div className="text-xs text-muted-foreground">Scores each job with GLM-5.2</div>
+                    <Sparkles className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                    <div>
+                      <div className="font-medium">AI Scoring</div>
+                      <div className="text-xs text-muted-foreground">Scores each job with GLM-5.2</div>
+                    </div>
                   </button>
                   <button
-                    className="w-full text-left px-3 py-2 text-sm rounded-sm hover:bg-accent transition-colors"
+                    className="w-full text-left px-3 py-2.5 text-sm rounded-lg hover:bg-secondary/50 transition-all group flex items-start gap-3"
                     onClick={() => {
                       setShowScoutMenu(false);
                       runScout.mutate({ useLlm: false });
                     }}
                   >
-                    <div className="font-medium">Run (rules only)</div>
-                    <div className="text-xs text-muted-foreground">Fast, free — no LLM scoring</div>
+                    <Zap className="h-4 w-4 text-accent-foreground mt-0.5 shrink-0" />
+                    <div>
+                      <div className="font-medium">Rules Only</div>
+                      <div className="text-xs text-muted-foreground">Fast, free — no LLM scoring</div>
+                    </div>
                   </button>
-                  <div className="my-1 border-t" />
+                  <div className="my-1 border-t border-border/50" />
                   <button
-                    className="w-full text-left px-3 py-2 text-sm rounded-sm hover:bg-accent transition-colors"
+                    className="w-full text-left px-3 py-2.5 text-sm rounded-lg hover:bg-secondary/50 transition-all group flex items-start gap-3"
                     onClick={() => {
                       setShowScoutMenu(false);
                       previewScout.mutate({ useLlm: true });
                     }}
                   >
-                    <div className="font-medium">Preview (don't add yet)</div>
-                    <div className="text-xs text-muted-foreground">Fetch + score, review before adding</div>
+                    <Eye className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                    <div>
+                      <div className="font-medium">Preview Mode</div>
+                      <div className="text-xs text-muted-foreground">Fetch + score, review before adding</div>
+                    </div>
                   </button>
                 </div>
               </>
@@ -95,21 +105,25 @@ export default function PipelinePage() {
 
       {/* Pending preview banner */}
       {pendingPreview && pendingPreview.jobsFound > 0 && (
-        <div className="mx-6 mb-2 rounded-lg border border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/40 p-4">
+        <div className="mx-6 mb-3 rounded-xl border border-accent/30 bg-accent/5 p-4 animate-in-up">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <Telescope className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                <span className="font-medium text-amber-900 dark:text-amber-200">
-                  Scout preview: {pendingPreview.jobsFound} new jobs found
-                </span>
-                <span className="text-xs text-amber-700 dark:text-amber-500">
-                  from {pendingPreview.companiesChecked} companies · {formatDistanceToNow(new Date(pendingPreview.startedAt), { addSuffix: true })}
-                </span>
+                <div className="h-8 w-8 rounded-lg bg-accent/15 flex items-center justify-center">
+                  <Telescope className="h-4 w-4 text-accent-foreground" />
+                </div>
+                <div>
+                  <span className="font-heading font-semibold text-sm">
+                    {pendingPreview.jobsFound} new jobs found
+                  </span>
+                  <span className="text-xs text-muted-foreground ml-2 font-mono">
+                    {pendingPreview.companiesChecked} companies · {formatDistanceToNow(new Date(pendingPreview.startedAt), { addSuffix: true })}
+                  </span>
+                </div>
               </div>
 
               <button
-                className="mt-2 flex items-center gap-1 text-xs text-amber-700 dark:text-amber-400 hover:underline"
+                className="mt-3 flex items-center gap-1 text-xs text-accent-foreground hover:underline font-medium"
                 onClick={() => setShowPreviewList((s) => !s)}
               >
                 {showPreviewList ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
@@ -117,29 +131,29 @@ export default function PipelinePage() {
               </button>
 
               {showPreviewList && (
-                <div className="mt-2 max-h-48 overflow-y-auto space-y-1">
+                <div className="mt-3 max-h-52 overflow-y-auto space-y-1 scrollbar-thin">
                   {pendingPreview.preview.map((job, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm py-1 px-2 rounded bg-amber-100/50 dark:bg-amber-900/20">
-                      <span className={`text-xs font-mono px-1.5 py-0.5 rounded ${
+                    <div key={i} className="flex items-center gap-2 text-sm py-1.5 px-2.5 rounded-lg bg-card/40 hover:bg-card/70 transition-colors">
+                      <span className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded-md shrink-0 ${
                         (job.matchScore ?? 0) >= 85
-                          ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300'
+                          ? 'bg-emerald-500/15 text-emerald-400'
                           : (job.matchScore ?? 0) >= 70
-                            ? 'bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
-                            : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                            ? 'bg-sky-500/15 text-sky-400'
+                            : 'bg-muted text-muted-foreground'
                       }`}>
                         {job.matchScore}
                       </span>
-                      <span className="font-medium">{job.companyName}</span>
-                      <span className="text-muted-foreground">— {job.role}</span>
+                      <span className="font-medium truncate">{job.companyName}</span>
+                      <span className="text-muted-foreground truncate">— {job.role}</span>
                       {job.location && (
-                        <span className="text-xs text-muted-foreground">· {job.location}</span>
+                        <span className="text-xs text-muted-foreground shrink-0 hidden sm:inline">· {job.location}</span>
                       )}
                       {job.jobUrl && (
                         <a
                           href={job.jobUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="ml-auto text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                          className="ml-auto text-xs text-primary hover:underline shrink-0"
                         >
                           View
                         </a>
@@ -155,11 +169,12 @@ export default function PipelinePage() {
                 size="sm"
                 disabled={confirmPreview.isPending}
                 onClick={() => confirmPreview.mutate(pendingPreview.runId)}
+                className="gap-2"
               >
                 {confirmPreview.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <CheckCircle2 className="h-4 w-4 mr-1.5" />
+                  <CheckCircle2 className="h-4 w-4" />
                 )}
                 Confirm & Add
               </Button>
