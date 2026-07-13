@@ -75,6 +75,8 @@ model Application {
   isRemote       Boolean       @default(false)
   stage          PipelineStage @default(WISHLIST)
   priority       Int           @default(0)
+  matchScore     Int?
+  matchReasons   String?
   appliedDate    DateTime?
   followUpDate   DateTime?
   deadlineDate   DateTime?
@@ -91,7 +93,42 @@ model Application {
   @@index([companyId])
   @@index([appliedDate])
   @@index([followUpDate])
+  @@index([matchScore])
   @@map("applications")
+}
+
+model ScoutRun {
+  id            String   @id @default(cuid())
+  startedAt     DateTime @default(now())
+  finishedAt    DateTime?
+  companiesChecked Int    @default(0)
+  jobsScanned     Int    @default(0)
+  jobsAdded       Int    @default(0)
+  jobsSkipped     Int    @default(0)
+  status       String   @default("running")
+  summary      String?
+
+  logs ScoutLog[]
+
+  @@map("scout_runs")
+}
+
+model ScoutLog {
+  id          String   @id @default(cuid())
+  scoutRunId  String
+  scoutRun    ScoutRun @relation(fields: [scoutRunId], references: [id], onDelete: Cascade)
+  companyName String
+  role        String
+  jobUrl      String?
+  location    String?
+  action      String   // "added" | "skipped_title" | "skipped_location" | "skipped_experience" | "skipped_duplicate" | "skipped_score"
+  reason      String?
+  matchScore  Int?
+  createdAt   DateTime @default(now())
+
+  @@index([scoutRunId])
+  @@index([action])
+  @@map("scout_logs")
 }
 
 model InterviewRound {

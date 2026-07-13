@@ -8,7 +8,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>/Users/adityajha/DEVNEW/hermes/exodus/scripts/job-scout-terminal.sh</string>
+        <string>/Users/adityajha/DEVNEW/hermes/exodus/scripts/scout-cron.sh</string>
     </array>
 
     <!-- Run daily at 9:00 AM -->

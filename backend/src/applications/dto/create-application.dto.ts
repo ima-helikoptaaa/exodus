@@ -61,6 +61,17 @@ export class CreateApplicationDto {
   priority?: number;
 
   @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(100)
+  matchScore?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  matchReasons?: string;
+
+  @IsOptional()
   @IsDateString()
   appliedDate?: string;
 

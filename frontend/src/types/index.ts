@@ -107,6 +107,8 @@ export interface Application {
   isRemote: boolean;
   stage: PipelineStage;
   priority: number;
+  matchScore?: number;
+  matchReasons?: string;
   appliedDate?: string;
   followUpDate?: string;
   deadlineDate?: string;
@@ -252,3 +254,46 @@ export const STAGE_COLORS: Record<PipelineStage, string> = {
   REJECTED: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
   WITHDRAWN: 'bg-gray-100 text-gray-500 dark:bg-gray-800/50 dark:text-gray-400',
 };
+
+// Scout types
+
+export interface ScoutRun {
+  id: string;
+  startedAt: string;
+  finishedAt?: string;
+  companiesChecked: number;
+  jobsScanned: number;
+  jobsAdded: number;
+  jobsSkipped: number;
+  status: string;
+  summary?: string;
+  _count?: { logs: number };
+}
+
+export interface ScoutLog {
+  id: string;
+  scoutRunId: string;
+  companyName: string;
+  role: string;
+  jobUrl?: string;
+  location?: string;
+  action: string;
+  reason?: string;
+  matchScore?: number;
+  createdAt: string;
+}
+
+export interface ScoutRunResult {
+  runId: string;
+  companiesChecked: number;
+  jobsScanned: number;
+  jobsAdded: number;
+  jobsSkipped: number;
+  preview?: Array<{
+    company: string;
+    role: string;
+    location: string;
+    score: number;
+    url: string;
+  }>;
+}

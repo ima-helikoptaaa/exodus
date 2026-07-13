@@ -34,17 +34,19 @@ export interface EducationEntry {
 // ─── LaTeX Escaping ───
 
 function escapeLatex(text: string): string {
-  return text
-    .replace(/\\/g, '\\textbackslash{}')
-    .replace(/([&%$#_{}])/g, '\\$1')
-    .replace(/~/g, '\\textasciitilde{}')
-    .replace(/\^/g, '\\textasciicircum{}')
-    // Restore intentional LaTeX commands the AI might use
-    .replace(/\\textbackslash\{\}textasciitilde\{\}/g, '\\textasciitilde{}')
-    .replace(/\\textbackslash\{\}textbf/g, '\\textbf')
-    .replace(/\\textbackslash\{\}textit/g, '\\textit')
-    .replace(/\\textbackslash\{\}href/g, '\\href')
-    .replace(/\\textbackslash\{\}textasciicircum\{\}/g, '\\textasciicircum{}');
+  return (
+    text
+      .replace(/\\/g, '\\textbackslash{}')
+      .replace(/([&%$#_{}])/g, '\\$1')
+      .replace(/~/g, '\\textasciitilde{}')
+      .replace(/\^/g, '\\textasciicircum{}')
+      // Restore intentional LaTeX commands the AI might use
+      .replace(/\\textbackslash\{\}textasciitilde\{\}/g, '\\textasciitilde{}')
+      .replace(/\\textbackslash\{\}textbf/g, '\\textbf')
+      .replace(/\\textbackslash\{\}textit/g, '\\textit')
+      .replace(/\\textbackslash\{\}href/g, '\\href')
+      .replace(/\\textbackslash\{\}textasciicircum\{\}/g, '\\textasciicircum{}')
+  );
 }
 
 // ─── Markdown Bold → LaTeX ───
@@ -125,7 +127,12 @@ function buildHeader(data: ResumeData): string {
       return `\\href{mailto:${c}}{${escaped}}`;
     }
     // Auto-link URLs
-    if (c.match(/^https?:\/\//) || c.includes('linkedin.com') || c.includes('github.com') || c.includes('kaggle.com')) {
+    if (
+      c.match(/^https?:\/\//) ||
+      c.includes('linkedin.com') ||
+      c.includes('github.com') ||
+      c.includes('kaggle.com')
+    ) {
       const url = c.startsWith('http') ? c : `https://${c}`;
       return `\\href{${url}}{${escaped}}`;
     }

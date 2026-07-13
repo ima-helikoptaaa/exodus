@@ -10,6 +10,7 @@ import { DashboardModule } from './dashboard/dashboard.module.js';
 import { ProfileModule } from './profile/profile.module.js';
 import { ResumesModule } from './resumes/resumes.module.js';
 import { AiModule } from './ai/ai.module.js';
+import { ScoutModule } from './scout/scout.module.js';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AiModule } from './ai/ai.module.js';
     ProfileModule,
     ResumesModule,
     AiModule,
+    ScoutModule,
   ],
 })
 export class AppModule {}
