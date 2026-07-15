@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/api/exodus/:path*", "destination": "http://13.214.26.96/api/exodus/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
