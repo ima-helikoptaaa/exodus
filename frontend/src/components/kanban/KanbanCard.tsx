@@ -1,8 +1,14 @@
 import { useDraggable } from '@dnd-kit/core';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import type { Application } from '@/types';
-import { format } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Calendar, Star, Flame } from 'lucide-react';
 
@@ -62,15 +68,47 @@ export default function KanbanCard({ app, isOverlay }: Props) {
         </div>
         <div className="flex items-center gap-1 shrink-0">
           {app.matchScore != null && app.matchScore > 0 && (
-            <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md ${
-              app.matchScore >= 85
-                ? 'bg-emerald-500/15 text-emerald-400'
-                : app.matchScore >= 70
-                  ? 'bg-sky-500/15 text-sky-400'
-                  : 'bg-muted text-muted-foreground'
-            }`}>
-              {app.matchScore}
-            </span>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span
+                    tabIndex={isOverlay ? undefined : 0}
+                    className={`cursor-default text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md ${
+                      app.matchScore >= 85
+                        ? 'bg-emerald-500/15 text-emerald-400'
+                        : app.matchScore >= 70
+                          ? 'bg-sky-500/15 text-sky-400'
+                          : 'bg-muted text-muted-foreground'
+                    }`}
+                  >
+                    {app.matchScore}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="left" className="max-w-xs text-xs">
+                  <div className="space-y-1">
+                    <p className="font-semibold">Why this score</p>
+                    {(() => {
+                      const reasons =
+                        app.matchReasons
+                          ?.split(';')
+                          .map((r) => r.trim())
+                          .filter(Boolean) ?? [];
+                      return reasons.length > 0 ? (
+                        <ul className="list-disc pl-4 space-y-0.5">
+                          {reasons.map((r, i) => (
+                            <li key={i}>{r}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-muted-foreground">
+                          No scoring details available.
+                        </p>
+                      );
+                    })()}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
           {app.priority > 0 && <Star className={`h-3.5 w-3.5 ${PRIORITY_COLORS[app.priority]}`} fill="currentColor" />}
         </div>
@@ -80,6 +118,19 @@ export default function KanbanCard({ app, isOverlay }: Props) {
         <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
           <MapPin className="h-3 w-3 shrink-0" />
           <span className="truncate">{app.isRemote ? 'Remote' : app.location}</span>
+        </div>
+      )}
+
+      {(app.source || app.postedAt) && (
+        <div className="flex items-center gap-1.5 mt-1.5 text-[10px] text-muted-foreground/60 font-mono">
+          {app.source && (
+            <span className="uppercase tracking-wide rounded bg-muted/40 px-1 py-0.5">{app.source}</span>
+          )}
+          {app.postedAt && (
+            <span title={app.postedAt}>
+              {formatDistanceToNow(new Date(app.postedAt), { addSuffix: true })}
+            </span>
+          )}
         </div>
       )}
 

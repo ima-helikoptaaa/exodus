@@ -1,4 +1,5 @@
 import type { RawJob } from '../scout.config.js';
+import { fetchJson, parseDate, stripHtml, toRawJob } from './shared.js';
 
 interface LeverPosting {
   id: string;
@@ -10,6 +11,7 @@ interface LeverPosting {
     team?: string;
     commitment?: string;
   };
+  workplaceType?: string;
   createdAt?: number;
   descriptionPlain?: string;
   description?: string;
@@ -20,32 +22,28 @@ export async function fetchLeverJobs(
   companyName: string,
 ): Promise<RawJob[]> {
   const url = `https://api.lever.co/v0/postings/${slug}?mode=json`;
-
-  const res = await fetch(url, {
-    headers: { Accept: 'application/json' },
-    signal: AbortSignal.timeout(15_000),
+  const data = await fetchJson<LeverPosting[]>(url, {
+    label: `Lever[${slug}]`,
   });
-
-  if (!res.ok) {
-    console.warn(`Lever[${slug}]: HTTP ${res.status}`);
-    return [];
-  }
-
-  const data = (await res.json()) as LeverPosting[];
   if (!Array.isArray(data)) return [];
 
   return data.map((p) => {
-    let description = p.descriptionPlain || p.description || p.text || '';
-    description = description.replace(/<[^>]*>/g, ' ').trim();
+    const description = stripHtml(
+      p.descriptionPlain || p.description || p.text || '',
+    );
+    const location = p.categories?.location || '';
 
-    return {
+    return toRawJob({
       title: p.text,
       company: companyName,
       url: p.hostedUrl || p.applyUrl || '',
-      description: description.slice(0, 10_000),
-      location: p.categories?.location || '',
-      postedAt: p.createdAt ? new Date(p.createdAt) : undefined,
+      description,
+      location,
+      postedAt: parseDate(p.createdAt),
+      remote:
+        p.workplaceType?.toLowerCase() === 'remote' ||
+        /remote|worldwide|anywhere/i.test(location),
       source: 'lever',
-    };
+    });
   });
 }

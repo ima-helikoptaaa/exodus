@@ -348,6 +348,109 @@ companies:
     greenhouse_slug: huggingface
     notes: "Remote-first"
 
+  # ───────────────────────────────────────────────────────────────────────────
+  # EXPANSION — verified live ATS slugs (probed 2026-07-14). Filters + location
+  # scoring cull the non-India/senior roles; goal is max funnel volume.
+  # ───────────────────────────────────────────────────────────────────────────
+  # --- Greenhouse (verified job counts) ---
+  - name: Stripe (GH)
+    greenhouse_slug: stripe
+    notes: "India office (Bangalore)"
+  - name: Dropbox
+    greenhouse_slug: dropbox
+    notes: "Remote-friendly"
+  - name: Coinbase (GH)
+    greenhouse_slug: coinbase
+    notes: "Remote-first"
+  - name: Robinhood
+    greenhouse_slug: robinhood
+    notes: "India office"
+  - name: Instacart
+    greenhouse_slug: instacart
+    notes: "Remote"
+  - name: Pinterest
+    greenhouse_slug: pinterest
+    notes: "Remote-friendly"
+  - name: Lyft
+    greenhouse_slug: lyft
+    notes: "India office"
+  - name: Reddit
+    greenhouse_slug: reddit
+    notes: "Remote-first"
+  - name: Twitch
+    greenhouse_slug: twitch
+    notes: "Remote"
+  - name: Discord
+    greenhouse_slug: discord
+    notes: "Remote-first"
+  - name: Asana
+    greenhouse_slug: asana
+    notes: "Bangalore office"
+  - name: New Relic
+    greenhouse_slug: newrelic
+    notes: "India office (Hyderabad)"
+  - name: Samsara
+    greenhouse_slug: samsara
+    notes: "Bangalore office"
+  - name: Affirm
+    greenhouse_slug: affirm
+    notes: "Remote-first"
+  - name: Chime
+    greenhouse_slug: chime
+    notes: "Remote"
+  - name: Scale AI
+    greenhouse_slug: scaleai
+    notes: "Remote-friendly AI"
+  - name: Verkada
+    greenhouse_slug: verkada
+    notes: "India office"
+  - name: Airtable
+    greenhouse_slug: airtable
+    notes: "Remote-friendly"
+  - name: Grafana Labs (GH)
+    greenhouse_slug: grafanalabs
+    notes: "Remote-first, India-friendly"
+  - name: Webflow
+    greenhouse_slug: webflow
+    notes: "Remote-first"
+  - name: Amplitude
+    greenhouse_slug: amplitude
+    notes: "Remote-friendly"
+
+  # --- Ashby (verified job counts) ---
+  - name: Ramp
+    ashby_slug: ramp
+    notes: "Remote-first fintech"
+  - name: OpenAI (Ashby)
+    ashby_slug: openai
+    notes: "Remote roles"
+  - name: Replit
+    ashby_slug: replit
+    notes: "Remote-first"
+  - name: Cursor (Anysphere)
+    ashby_slug: cursor
+    notes: "Remote, AI coding"
+  - name: Perplexity
+    ashby_slug: perplexity
+    notes: "Remote-first AI"
+  - name: Vanta
+    ashby_slug: vanta
+    notes: "Remote-first"
+  - name: PostHog
+    ashby_slug: posthog
+    notes: "Remote-first, product eng"
+  - name: Sardine
+    ashby_slug: sardine
+    notes: "Remote fintech"
+  - name: Runway
+    ashby_slug: runway
+    notes: "Remote AI"
+
+  # --- Lever (verified job counts) ---
+  - name: Spotify
+    lever_slug: spotify
+    notes: "India presence, remote roles"
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Job boards to search AFTER company career pages
 # ─────────────────────────────────────────────────────────────────────────────
@@ -396,3 +499,141 @@ job_boards:
     queries:
       - "site:cutshort.io software engineer"
       - "site:cutshort.io backend engineer"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Aggregator sources — driven by the connector registry (scout.service reads
+# these). Each `type` maps to a connector; `enabled: false` turns one off.
+# Credential-backed sources (serpapi/linkedin/reddit/wellfound/naukri) no-op
+# gracefully if their env vars are missing, so it's safe to leave them enabled.
+# ─────────────────────────────────────────────────────────────────────────────
+sources:
+  # --- Free, no auth ---
+  - type: hn_hiring
+    name: HN Who is Hiring
+    enabled: true
+    options:
+      indiaOrRemoteOnly: true
+
+  - type: remoteok
+    name: RemoteOK
+    enabled: true
+
+  - type: remotive
+    name: Remotive
+    enabled: true
+    options:
+      searches:
+        - software engineer
+        - backend engineer
+        - full stack engineer
+        - platform engineer
+        - devops
+
+  - type: weworkremotely
+    name: We Work Remotely
+    enabled: true
+    options:
+      feeds:
+        - https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss
+        - https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss
+        - https://weworkremotely.com/categories/remote-devops-sysadmin-jobs.rss
+        - https://weworkremotely.com/categories/remote-front-end-programming-jobs.rss
+        - https://weworkremotely.com/remote-jobs.rss
+
+  # --- Free but needs an Algolia public key from YC's bundle ---
+  - type: workatastartup
+    name: YC Work at a Startup
+    enabled: false   # set WAAS_ALGOLIA_APP_ID / WAAS_ALGOLIA_API_KEY, then enable
+    options:
+      query: engineer
+
+  # --- Free with app creds (falls back to public JSON if unset) ---
+  - type: reddit_hiring
+    name: r/developersIndia hiring
+    enabled: true
+    options:
+      subreddits:
+        - developersIndia
+        - cscareerquestionsIndia
+
+  # --- Paid API key (SERPAPI_KEY) — long-tail coverage of slug-less companies ---
+  - type: serpapi
+    name: SerpApi long-tail
+    enabled: true
+    options:
+      location: India
+      queries:
+        - 'site:razorpay.com/jobs software engineer'
+        - 'site:careers.cred.club software engineer'
+        - 'site:flipkartcareers.com software engineer'
+        - 'site:careers.swiggy.com software engineer'
+        - 'site:juspay.in/careers software engineer'
+        - 'site:groww.in/careers software engineer'
+        - 'site:zerodha.com/careers engineer'
+        - 'site:phonepe.com/careers software engineer'
+        - 'site:tower-research.com engineer india'
+        - 'site:deshaw.com/careers engineer india'
+
+  # --- Free long-tail via self-hosted SearXNG (replaces SerpApi when up).
+  #     Reads SEARXNG_URL env (default http://localhost:8888). Needs JSON
+  #     format enabled in SearXNG settings. Enable once the instance is live. ---
+  - type: searxng
+    name: SearXNG long-tail
+    enabled: false
+    options:
+      location: India
+      queries:
+        - 'site:razorpay.com software engineer'
+        - 'site:careers.cred.club software engineer'
+        - 'site:flipkartcareers.com software engineer'
+        - 'site:careers.swiggy.com software engineer'
+        - 'site:juspay.in software engineer'
+        - 'site:groww.in software engineer'
+        - 'site:zerodha.com engineer'
+        - 'site:phonepe.com software engineer'
+        - 'software engineer job india backend 0-3 years'
+        - 'startup hiring backend engineer india remote'
+
+  # --- Playwright scrapers (heavy). LinkedIn works unauthenticated via the
+  #     guest endpoint; set LINKEDIN_LI_AT for authenticated results. ---
+  - type: linkedin
+    name: LinkedIn Jobs
+    enabled: true
+    options:
+      # Guest endpoint returns ~10 jobs/page; pages*10 is the ceiling per query.
+      pages: 8
+      queries:
+        - keywords: backend engineer
+          location: India
+          freshnessSeconds: 604800
+        - keywords: software engineer
+          location: India
+          freshnessSeconds: 604800
+        - keywords: software engineer
+          location: India
+          freshnessSeconds: 604800
+          remote: true
+        - keywords: full stack engineer
+          location: India
+          freshnessSeconds: 604800
+        - keywords: platform engineer
+          location: India
+          freshnessSeconds: 604800
+        - keywords: backend engineer
+          location: India
+          freshnessSeconds: 604800
+          remote: true
+
+  - type: wellfound
+    name: Wellfound
+    enabled: false   # needs WELLFOUND_COOKIE for reliable results
+    options:
+      roles:
+        - software-engineer
+        - backend-engineer
+      location: india
+
+  - type: naukri
+    name: Naukri
+    enabled: false   # set NAUKRI_RSS_FEEDS (saved-search RSS) then enable
+    options: {}

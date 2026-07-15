@@ -16,7 +16,10 @@ function getErrorMessage(error: unknown, fallback: string): string {
 export function useApplications(params?: { stage?: PipelineStage; search?: string }) {
   return useQuery<Application[]>({
     queryKey: ['applications', params],
-    queryFn: () => api.get('/applications', { params }).then((r) => r.data),
+    // The board is a kanban that shows every card; request a high limit so the
+    // API's default page size (50) doesn't truncate the wishlist.
+    queryFn: () =>
+      api.get('/applications', { params: { ...params, limit: 1000 } }).then((r) => r.data),
   });
 }
 

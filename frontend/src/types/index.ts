@@ -99,6 +99,7 @@ export interface Application {
   company: Company;
   role: string;
   jobUrl?: string;
+  source?: string;
   jobDescription?: string;
   salaryMin?: number;
   salaryMax?: number;
@@ -109,6 +110,7 @@ export interface Application {
   priority: number;
   matchScore?: number;
   matchReasons?: string;
+  postedAt?: string;
   appliedDate?: string;
   followUpDate?: string;
   deadlineDate?: string;
@@ -303,6 +305,8 @@ export interface ScoutRunResult {
   jobsScanned: number;
   jobsAdded: number;
   jobsSkipped: number;
+  scoringFailures: number;
+  outage: boolean;
   preview?: Array<{
     company: string;
     role: string;

@@ -12,6 +12,7 @@ PROMPT_FILE="$SCRIPT_DIR/job-scout-prompt.md"
 LOG_DIR="$HOME/.exodus/logs"
 LOG_FILE="$LOG_DIR/job-scout-$(date +%Y-%m-%d).log"
 CLAUDE_BIN="$HOME/.claude/local/claude"
+BACKEND_URL="${EXODUS_BACKEND_URL:-http://localhost:3000/api/exodus}"
 
 # Ensure log + scan history directories exist
 mkdir -p "$LOG_DIR"
@@ -39,9 +40,9 @@ if [ ! -f "$PROMPT_FILE" ]; then
 fi
 
 # Quick health check on the backend
-HEALTH_CHECK=$(curl -s -o /dev/null -w '%{http_code}' --connect-timeout 10 "http://13.214.26.96/api/exodus/profile" 2>/dev/null) || true
+HEALTH_CHECK=$(curl -s -o /dev/null -w '%{http_code}' --connect-timeout 10 "$BACKEND_URL/profile" 2>/dev/null) || true
 if [ "$HEALTH_CHECK" != "200" ]; then
-  log "ERROR: Backend at 13.214.26.96 returned HTTP $HEALTH_CHECK (expected 200). Skipping today's run."
+  log "ERROR: Backend at $BACKEND_URL returned HTTP $HEALTH_CHECK (expected 200). Skipping today's run."
   exit 1
 fi
 log "Backend health check passed (HTTP $HEALTH_CHECK)"

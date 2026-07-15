@@ -67,6 +67,7 @@ model Application {
   company        Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
   role           String
   jobUrl         String?
+  source         String?
   jobDescription String?
   salaryMin      Int?
   salaryMax      Int?
@@ -77,6 +78,7 @@ model Application {
   priority       Int           @default(0)
   matchScore     Int?
   matchReasons   String?
+  postedAt       DateTime?
   appliedDate    DateTime?
   followUpDate   DateTime?
   deadlineDate   DateTime?
@@ -94,6 +96,7 @@ model Application {
   @@index([appliedDate])
   @@index([followUpDate])
   @@index([matchScore])
+  @@index([postedAt])
   @@map("applications")
 }
 
@@ -121,7 +124,7 @@ model ScoutLog {
   role        String
   jobUrl      String?
   location    String?
-  action      String   // "added" | "skipped_title" | "skipped_location" | "skipped_experience" | "skipped_duplicate" | "skipped_score"
+  action      String   // "added" | "skipped_title" | "skipped_location" | "skipped_experience" | "skipped_duplicate" | "skipped_score" | "skipped_stale" | "skipped_scoring_outage"
   reason      String?
   matchScore  Int?
   createdAt   DateTime @default(now())
@@ -129,6 +132,28 @@ model ScoutLog {
   @@index([scoutRunId])
   @@index([action])
   @@map("scout_logs")
+}
+
+/// Persistent record of every job the scout has ever evaluated (added OR
+/// rejected). Prevents re-scoring the same posting every run — saves LLM cost
+/// and stops rejected jobs from reappearing in the wishlist.
+model SeenJob {
+  id         String    @id @default(cuid())
+  url        String    @unique
+  company    String
+  title      String
+  location   String?
+  source     String?
+  /// Normalized company|title|location key for fuzzy near-duplicate detection
+  /// (same role from two aggregators with different tracking URLs).
+  jobHash    String?
+  firstSeen  DateTime  @default(now())
+  lastSeen   DateTime  @updatedAt
+  rejected   Boolean   @default(false)
+  rejectedAt DateTime?
+
+  @@index([jobHash])
+  @@map("seen_jobs")
 }
 
 model InterviewRound {

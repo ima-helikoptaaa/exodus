@@ -1,4 +1,5 @@
 import type { RawJob } from '../scout.config.js';
+import { fetchJson, parseDate, stripHtml, toRawJob } from './shared.js';
 
 interface GreenhouseJob {
   id: number;
@@ -19,19 +20,10 @@ export async function fetchGreenhouseJobs(
   companyName: string,
 ): Promise<RawJob[]> {
   const url = `https://boards-api.greenhouse.io/v1/boards/${slug}/jobs?content=true`;
-
-  const res = await fetch(url, {
-    headers: { Accept: 'application/json' },
-    signal: AbortSignal.timeout(15_000),
+  const data = await fetchJson<GreenhouseResponse>(url, {
+    label: `Greenhouse[${slug}]`,
   });
-
-  if (!res.ok) {
-    console.warn(`Greenhouse[${slug}]: HTTP ${res.status}`);
-    return [];
-  }
-
-  const data = (await res.json()) as GreenhouseResponse;
-  const jobs = data.jobs || [];
+  const jobs = data?.jobs ?? [];
 
   return jobs.map((j) => {
     let description = j.content || '';
@@ -41,24 +33,17 @@ export async function fetchGreenhouseJobs(
         .join('\n');
       description = description + '\n\n' + metaText;
     }
-    description = description
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&#39;/g, "'")
-      .replace(/&quot;/g, '"')
-      .trim();
+    const location = j.location?.name || '';
 
-    return {
+    return toRawJob({
       title: j.title,
       company: companyName,
       url: j.absolute_url,
-      description: description.slice(0, 10_000),
-      location: j.location?.name || '',
-      postedAt: j.updated_at ? new Date(j.updated_at) : undefined,
+      description: stripHtml(description),
+      location,
+      postedAt: parseDate(j.updated_at),
+      remote: /remote|worldwide|anywhere/i.test(location),
       source: 'greenhouse',
-    };
+    });
   });
 }

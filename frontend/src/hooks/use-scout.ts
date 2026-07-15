@@ -55,9 +55,15 @@ export function useRunScout() {
       qc.invalidateQueries({ queryKey: ['scout-runs'] });
       qc.invalidateQueries({ queryKey: ['scout-last-run'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast.success(
-        `Scout complete: ${data.jobsAdded} added, ${data.jobsSkipped} skipped (${data.companiesChecked} companies)`,
-      );
+      if (data.outage) {
+        toast.error(
+          `Scout degraded: LLM outage — ${data.jobsAdded} added, ${data.jobsSkipped} skipped (${data.scoringFailures} scoring failures)`,
+        );
+      } else {
+        toast.success(
+          `Scout complete: ${data.jobsAdded} added, ${data.jobsSkipped} skipped (${data.companiesChecked} companies)`,
+        );
+      }
     },
     onError: (error: any) => {
       const msg = error?.response?.data?.message || 'Scout run failed';
